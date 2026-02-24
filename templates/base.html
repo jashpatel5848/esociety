@@ -1,0 +1,43 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}eSociety{% endblock %}</title>
+
+    <!-- Common CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Navbar (Role-based for authenticated users, hidden on signup/login) -->
+    {% if request.user.is_authenticated and request.resolver_match.url_name not in "signup,login" %}
+        {% if request.user.role == 'admin' %}
+            {% include "admin_navbar.html" %}
+        {% elif request.user.role == 'resident' %}
+            {% include "resident_navbar.html" %}
+        {% elif request.user.role == 'guard' %}
+            {% include "guard_navbar.html" %}
+        {% endif %}
+    {% endif %}
+
+    <!-- Page specific content -->
+    <div class="container">
+        {% block content %}
+        <!-- Page content goes here -->
+        {% endblock %}
+    </div>
+
+    <!-- Footer (hidden on signup/login pages) -->
+    {% if request.resolver_match.url_name not in "signup,login" %}
+    <footer>
+        © 2026 eSociety - All Rights Reserved
+    </footer>
+    {% endif %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

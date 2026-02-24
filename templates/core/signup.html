@@ -1,5 +1,304 @@
-<form method="post">
-    {% csrf_token %}
-    {{form.as_p}}
-    <button type="submit">signup</button>
-</form>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up - eSociety{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">🏢</div>
+            <h1 class="auth-title">Create Account</h1>
+            <p class="auth-subtitle">Join eSociety Management System</p>
+        </div>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    <strong>Signup Error!</strong>
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Email Field -->
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="form-label">📧 Email Address</label>
+                <input 
+                    type="email" 
+                    id="{{ form.email.id_for_label }}" 
+                    name="email" 
+                    placeholder="your.email@example.com"
+                    value="{{ form.email.value|default:'' }}"
+                    class="form-input"
+                    required
+                >
+                {% if form.email.errors %}
+                    <div class="form-error-message">{{ form.email.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Role Field -->
+            <div class="form-group">
+                <label for="{{ form.role.id_for_label }}" class="form-label">👤 Role</label>
+                <select 
+                    id="{{ form.role.id_for_label }}" 
+                    name="role"
+                    class="form-input"
+                    required
+                >
+                    <option value="">Select Role</option>
+                    <option value="admin">🔴 Admin</option>
+                    <option value="resident">🟢 Resident</option>
+                    <option value="guard">🔵 Guard</option>
+                </select>
+                {% if form.role.errors %}
+                    <div class="form-error-message">{{ form.role.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div style="height: 1px; background: #ecf0f1; margin: 20px 0;"></div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}" class="form-label">🔒 Password</label>
+                <input 
+                    type="password" 
+                    id="{{ form.password1.id_for_label }}" 
+                    name="password1"
+                    placeholder="Enter password"
+                    class="form-input"
+                    required
+                >
+                {% if form.password1.errors %}
+                    <div class="form-error-message">{{ form.password1.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}" class="form-label">✓ Confirm Password</label>
+                <input 
+                    type="password" 
+                    id="{{ form.password2.id_for_label }}" 
+                    name="password2"
+                    placeholder="Confirm password"
+                    class="form-input"
+                    required
+                >
+                {% if form.password2.errors %}
+                    <div class="form-error-message">{{ form.password2.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="auth-button">Create Account</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="/core/login/" class="auth-link">Sign In</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        background: #f0f4f8;
+    }
+
+    .auth-card {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        width: 100%;
+        max-width: 420px;
+        animation: slideIn 0.4s ease;
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .auth-logo {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+
+    .auth-title {
+        color: #2c3e50;
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+
+    .auth-subtitle {
+        color: #7f8c8d;
+        font-size: 13px;
+    }
+
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .form-label {
+        color: #2c3e50;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-input {
+        padding: 12px;
+        border: 2px solid #ecf0f1;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s;
+        background: #f8f9fa;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-error-message {
+        color: #e74c3c;
+        font-size: 12px;
+        background: #fdeaea;
+        padding: 8px;
+        border-radius: 4px;
+    }
+
+    .auth-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+
+    .auth-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 13px;
+        color: #7f8c8d;
+    }
+
+    .auth-link {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .alert {
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        border-left: 4px solid;
+    }
+
+    .alert-error {
+        background: #fdeaea;
+        border-left-color: #e74c3c;
+        color: #c0392b;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .auth-container {
+            padding: 15px;
+        }
+
+        .auth-card {
+            padding: 30px 20px;
+        }
+
+        .auth-logo {
+            font-size: 40px;
+        }
+
+        .auth-title {
+            font-size: 20px;
+        }
+
+        .form-input {
+            font-size: 16px;
+            padding: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .auth-card {
+            padding: 25px 15px;
+        }
+
+        .auth-header {
+            margin-bottom: 20px;
+        }
+
+        .auth-form {
+            gap: 12px;
+        }
+
+        .auth-logo {
+            font-size: 36px;
+        }
+
+        .auth-title {
+            font-size: 18px;
+        }
+
+        .auth-subtitle {
+            font-size: 12px;
+        }
+
+        .form-label {
+            font-size: 11px;
+        }
+
+        .form-input {
+            padding: 12px 10px;
+            font-size: 16px;
+        }
+
+        .auth-button {
+            padding: 11px;
+            font-size: 13px;
+        }
+    }
+</style>
+{% endblock %}

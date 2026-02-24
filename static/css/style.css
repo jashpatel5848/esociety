@@ -1,0 +1,164 @@
+/* ===== GLOBAL STYLES ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    background: #8ea6c9;
+    color: #aeb2b7;
+    line-height: 1.6;
+}
+
+/* ===== NAVBAR STYLES ===== */
+.navbar {
+    padding: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar-admin {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.navbar-resident {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+}
+
+.navbar-guard {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 70px;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.navbar-brand a {
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    text-decoration: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.navbar-role-badge {
+    background: rgba(255,255,255,0.3);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.navbar-menu {
+    display: flex;
+    list-style: none;
+    gap: 0;
+    align-items: center;
+}
+
+.navbar-item {
+    position: relative;
+}
+
+.navbar-link {
+    color: rgba(255,255,255,0.9);
+    padding: 20px 16px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: block;
+    border-bottom: 3px solid transparent;
+}
+
+.navbar-link:hover {
+    background: rgba(255,255,255,0.1);
+    border-bottom-color: rgba(255,255,255,0.5);
+    color: white;
+}
+
+/* ===== CONTAINER & LAYOUT ===== */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    font-size: 13px;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 0 15px;
+    }
+
+    .navbar-menu {
+        gap: 0;
+    }
+
+    .navbar-link {
+        padding: 18px 12px;
+        font-size: 13px;
+    }
+
+    .navbar-brand a {
+        font-size: 20px;
+    }
+
+    .navbar-role-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-container {
+        height: 60px;
+        padding: 0 10px;
+    }
+
+    .navbar-brand a {
+        font-size: 18px;
+    }
+
+    .navbar-link {
+        padding: 15px 8px;
+        font-size: 12px;
+    }
+
+    .navbar-role-badge {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+
+    .container {
+        padding: 0 15px;
+    }
+}
