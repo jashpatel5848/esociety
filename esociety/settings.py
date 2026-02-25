@@ -121,5 +121,4 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 AUTH_USER_MODEL = 'core.User'
-STATICFILES_DIRS = [
-    BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "static"]

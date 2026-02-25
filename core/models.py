@@ -1,9 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    BaseUserManager,
-    
-)
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+
 
 
 class UserManager(BaseUserManager):
@@ -27,18 +24,18 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
-
+    
 
 # Create your models here.
 
 class User(AbstractBaseUser):
+     
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
 
-    def has_perm(self,perm,obj=None):
+    def has_module_perms(self, app_label):
         return self.is_admin
-    
-    def has_module_perm(self, app_label):
-        return self.is_admin
-    
+
     
     role_choice = (
         ('admin', 'admin'),
@@ -46,13 +43,13 @@ class User(AbstractBaseUser):
         ('guard', 'guard'),
     )
     role = models.CharField(max_length=10, choices=role_choice, default='user')
-    username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=10, unique=True)
+    phone = models.CharField(max_length=10, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    is_admin = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
     # override username field
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

@@ -1,34 +1,43 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from .forms import UserSignupForm
+from django.shortcuts import render, redirect, HttpResponse
+from .forms import UserSignupForm,UserLoginForm 
+from django.contrib.auth import authenticate,login
 
 # Create your views here.
 def userSignupView(request):
     if request.method == "POST":
         form = UserSignupForm(request.POST or None)
         if form.is_valid():
-            user = form.save()
-            # Auto-login after signup
-            login(request, user)
-            return redirect("/")
+            form.save()
+            return redirect("login")
         else:
             return render(request, 'core/signup.html', {'form': form})    
     else:
         form = UserSignupForm()
-        return render(request, 'core/signup.html', {'form': form})
+    return render(request, 'core/signup.html', {'form': form})
+
 
 def userLoginView(request):
-    if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            login(request, user)
-            return redirect("/")
-        else:
-            error_message = "Invalid email/username or password. Please try again."
-            return render(request, 'login.html', {'error': error_message})
-    
-    return render(request, 'login.html')    
+    if request.method =="POST":  
+        form = UserLoginForm(request.POST or None)
+        if form.is_valid():
+            print(form.cleaned_data)
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = authenticate(request,email=email,password=password)   #it will check iin database....
+            if user:
+                login(request,user)
+                print("user....",user)
+                print("role...",user.role)
+                if user.role == "admin":
+                    return redirect("admin_dashboard")   #society > urls.py <-- file to 
+                elif user.role == "resident":
+                    return redirect("resident_dashboard")
+                elif user.role == "guard":
+                    return redirect("guard_dashboard")
+
+            else:
+                return render(request,'core/login.html',{'form':form})
+
+    else: 
+        form = UserLoginForm()
+        return render(request,'core/login.html',{'form': form}) 
