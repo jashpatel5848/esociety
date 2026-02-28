@@ -16,8 +16,10 @@
     {% elif request.user.role == 'guard' %}
         {% include 'society/guard/guard_navbar.html' %}
     {% endif %}
+
     {% block content %}
     {% endblock %}
+    
     footer...
 
     

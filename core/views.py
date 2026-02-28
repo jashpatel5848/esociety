@@ -1,15 +1,20 @@
 from django.shortcuts import render, redirect, HttpResponse
 from .forms import UserSignupForm,UserLoginForm 
 from django.contrib.auth import authenticate,login
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
-def userSignupView(request):
+def userSignupView(request): 
     if request.method == "POST":
         form = UserSignupForm(request.POST or None)
         if form.is_valid():
+            #email send
+            email = form.cleaned_data['email']
+            send_mail(subject="welcome to esociety",message="thank you for registering with e-society.",from_email=settings.EMAIL_HOST_USER,recipient_list=[email])
             form.save()
             return redirect("login")
-        else:
+        else:  
             return render(request, 'core/signup.html', {'form': form})    
     else:
         form = UserSignupForm()
