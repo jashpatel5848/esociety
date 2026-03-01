@@ -6,12 +6,14 @@ from django import forms
 class UserSignupForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['email','role','password1','password2']
-        widget = {
-            'password1':forms.PasswordInput(),
-            'password2':forms.PasswordInput()                
-            
+        fields = ['first_name','last_name','gender','email','role','password1','password2']
+
+        widgets = {
+            'password1':forms.PasswordInput(),         # password1
+            'password2':forms.PasswordInput(),         # password2
+            'gender':forms.RadioSelect()               # gender radio 
         }
+
 
 class UserLoginForm(forms.Form):
     email = forms.EmailField()

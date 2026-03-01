@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
 from .forms import UserSignupForm,UserLoginForm 
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -46,3 +46,7 @@ def userLoginView(request):
     else: 
         form = UserLoginForm()
         return render(request,'core/login.html',{'form': form}) 
+    
+def userLogoutView(request):
+    logout(request)             #user ka sessio clear
+    return redirect('login')

@@ -19,6 +19,15 @@
 
     {% block content %}
     {% endblock %}
+
+
+
+    {% comment %} logout button {% endcomment %}
+    <form method="post" action="{% url 'logout' %}"> 
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+    </form>
+
     
     footer...
 
