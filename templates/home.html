@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Welcome to e-Society</h1>
+        <p>Smart Digital Solution for Modern Residential Communities</p>
+
+        <div class="hero-buttons">
+            <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            <a href="{% url 'signup' %}" class="btn btn-success">Create Account</a>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="features">
+    <h2 class="section-title">Our Features</h2>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <h3>Visitor Management</h3>
+            <p>Secure digital visitor approvals with real-time notifications.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Complaint Tracking</h3>
+            <p>Residents can raise and track complaints easily.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Facility Booking</h3>
+            <p>Book clubhouse, gym, and other society amenities online.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section class="about">
+    <h2 class="section-title">Why Choose e-Society?</h2>
+    <p>
+        e-Society provides a secure, transparent and efficient way to manage
+        gated communities. From visitor management to financial tracking,
+        everything is handled digitally.
+    </p>
+</section>
+
+{% endblock %}

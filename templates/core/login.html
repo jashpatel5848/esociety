@@ -1,5 +1,25 @@
-<form method="post">
+{% extends "base.html" %}
+{% comment %} <form method="post">
     {% csrf_token %}
     {{form.as_p}}
     <button type="submit">login</button>
-</form>
+</form> {% endcomment %}
+
+{% block content %}
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2 class="auth-title">Login</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" class="btn btn-primary full-btn">
+                Login
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,363 @@
+/* ===================== 1. RESET ======================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===================== 2. BODY ======================== */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #ebedf2, #c6cbd1);
+    color: #333333;
+}
+
+/* ===================== 3. NAVBAR ====================== */
+.navbar {
+    background-color: #1E3A8A;
+    color: #ffffff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Logo */
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    letter-spacing: 0.5px;
+}
+
+/* Nav Links */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+.nav-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #3B82F6;
+    opacity: 1;
+}
+
+/* Right Section */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+
+/* ===================== 4. MAIN CONTAINER ============== */
+.main-container {
+    padding: 30px;
+}
+
+
+/* ===================== 5. CARD DESIGN ================= */
+.card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    transition: 0.3s;
+    border-left: 4px solid #3B82F6;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+
+/* ===================== 6. DASHBOARD GRID ============== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+
+/* ===================== 7. BUTTONS ===================== */
+.btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.btn-primary {
+    background-color: #3B82F6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1E40AF;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background-color: #22C55E;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #16A34A;
+}
+
+.btn-danger {
+    background-color: #EF4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #DC2626;
+}
+
+.logout-btn {
+    background-color: #EF4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.logout-btn:hover {
+    background-color: #DC2626;
+}
+
+
+/* ===================== 8. TABLE ======================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-top: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+th {
+    background: #1E3A8A;
+    color: white;
+    font-weight: 600;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    color: #333333;
+}
+
+tr:hover {
+    background-color: #f8fafc;
+}
+
+
+/* ===================== 9. FORM ELEMENTS =============== */
+form {
+    max-width: 500px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: 0.3s;
+    color: #333333;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+input::placeholder, textarea::placeholder {
+    color: #9ca3af;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+
+/* ===================== 10. ALERTS ===================== */
+.alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    border-left: 4px solid #22C55E;
+}
+
+.alert-danger {
+    background: #FEE2E2;
+    color: #7F1D1D;
+    border-left: 4px solid #EF4444;
+}
+
+.alert-warning {
+    background: #FEF3C7;
+    color: #78350F;
+    border-left: 4px solid #f59e0b;
+}
+
+/* ================= AUTH PAGES (LOGIN / SIGNUP) ================= */
+
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-top: 4px solid #3B82F6;
+}
+
+.auth-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #1E3A8A;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.full-btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+
+/* ===================== 12. RESPONSIVE ================= */
+@media (max-width: 768px) {
+
+    .nav-links {
+        display: none;
+    }
+
+    .main-container {
+        padding: 15px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 80px 15px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+}
+
+/* ================= HOME PAGE DESIGN ================= */
+
+/* HERO SECTION */
+.hero {
+    background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+    color: white;
+    text-align: center;
+    padding: 120px 20px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 25px;
+    opacity: 0.95;
+}
+
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* FEATURES */
+.features {
+    padding: 70px 40px;
+    background: #f8fafc;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 28px;
+    margin-bottom: 40px;
+    color: #1E3A8A;
+    font-weight: 600;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    transition: 0.3s ease;
+    border-top: 3px solid #3B82F6;
+    color: #333333;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* ABOUT */
+.about {
+    padding: 60px 80px;
+    text-align: center;
+    background: white;
+}
+
+.about p {
+    max-width: 700px;
+    margin: auto;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333333;
+}

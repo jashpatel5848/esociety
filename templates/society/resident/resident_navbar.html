@@ -1,1 +1,38 @@
-resident navbar
+<nav class="navbar">
+
+    <div class="logo">
+        <a href="{% url 'resident_dashboard' %}">e-Society Resident</a>
+    </div>
+
+    <ul class="nav-links">
+        <li>
+            <a href="{% url 'resident_dashboard' %}">Dashboard</a>
+        </li>
+        <li>
+            <a href="#">My Complaints</a>
+        </li>
+        <li>
+            <a href="#">Notices</a>
+        </li>
+        <li>
+            <a href="#">Visitors</a>
+        </li>
+        <li>
+            <a href="#">Maintenance</a>
+        </li>
+    </ul>
+
+    <div class="nav-right">
+        <span class="user-name">
+            👤 {{ request.user.username }}
+        </span>
+
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+                Logout
+            </button>
+        </form>
+    </div>
+
+</nav>

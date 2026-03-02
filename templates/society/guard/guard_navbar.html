@@ -1,0 +1,35 @@
+<nav class="navbar">
+
+    <div class="logo">
+        <a href="{% url 'guard_dashboard' %}">e-Society Guard</a>
+    </div>
+
+    <ul class="nav-links">
+        <li>
+            <a href="{% url 'guard_dashboard' %}">Dashboard</a>
+        </li>
+        <li>
+            <a href="#">Visitor Entry</a>
+        </li>
+        <li>
+            <a href="#">Approved Visitors</a>
+        </li>
+        <li>
+            <a href="#">Emergency Alerts</a>
+        </li>
+    </ul>
+
+    <div class="nav-right">
+        <span class="user-name">
+            👤 {{ request.user.username }}
+        </span>
+
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+                Logout
+            </button>
+        </form>
+    </div>
+
+</nav>

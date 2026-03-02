@@ -4,34 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    {% comment "" %} <link>rel="stylesheet" href="{% static 'css/style.css'%}"</link> {% endcomment %}
+    <title>e-society</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
 </head>
 <body>
     {% comment "" %}  // check role for navbar...  {% endcomment %}
-    {% if request.user.role == 'admin' %}
-        {% include 'society/admin/admin_navbar.html' %}
-    {% elif request.user.role == 'resident' %}
-        {% include 'society/resident/resident_navbar.html' %}
-    {% elif request.user.role == 'guard' %}
-        {% include 'society/guard/guard_navbar.html' %}
+    {% if request.user.is_authenticated %}
+        {% if request.user.role == 'admin' %}
+            {% include 'society/admin/admin_navbar.html' %}
+        {% elif request.user.role == 'resident' %}
+            {% include 'society/resident/resident_navbar.html' %}
+        {% elif request.user.role == 'guard' %}
+            {% include 'society/guard/guard_navbar.html' %}
+        {% endif %}
     {% endif %}
-
-    {% block content %}
-    {% endblock %}
-
-
-
-    {% comment %} logout button {% endcomment %}
-    <form method="post" action="{% url 'logout' %}"> 
-    {% csrf_token %}
-    <button type="submit">Logout</button>
-    </form>
-
     
-    footer...
+    <div class="main-container">
+        {% block content %}
+        {% endblock %}
+    </div>    
+    
 
-    
-    
 </body>
 </html>
