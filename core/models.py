@@ -28,6 +28,7 @@ class UserManager(BaseUserManager):
 
 # Create your models here.
 
+# Custom User Model
 class User(AbstractBaseUser):
      
     def has_perm(self, perm, obj=None):

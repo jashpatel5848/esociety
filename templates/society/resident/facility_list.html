@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Facilities — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Facilities</h2>
+            <p class="page-header-subtitle">Book society amenities</p>
+        </div>
+        <a href="{% url 'resident_my_bookings' %}" class="btn btn-ghost btn-sm">My Bookings</a>
+    </div>
+
+    <div class="grid grid-auto">
+        {% if facilities %}
+            {% for f in facilities %}
+            <div class="card card-glow">
+                <div style="font-size:2rem;margin-bottom:14px;">
+                    {% if 'gym' in f.name|lower %}🏋️
+                    {% elif 'pool' in f.name|lower %}🏊
+                    {% elif 'hall' in f.name|lower %}🏛️
+                    {% elif 'park' in f.name|lower %}🌳
+                    {% elif 'club' in f.name|lower %}🎯
+                    {% else %}🏢{% endif %}
+                </div>
+                <div style="font-family:var(--font-display);font-size:1.125rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;">
+                    {{ f.name }}
+                </div>
+                <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:14px;">
+                    {{ f.description|default:"No description" }}
+                </p>
+                <div style="display:flex;gap:16px;margin-bottom:16px;">
+                    <div>
+                        <div style="font-size:0.75rem;color:var(--text-muted);">Capacity</div>
+                        <div style="font-weight:600;color:var(--text-primary);">{{ f.capacity }} persons</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.75rem;color:var(--text-muted);">Price</div>
+                        <div style="font-weight:600;color:var(--primary);">₹{{ f.price }}</div>
+                    </div>
+                </div>
+                <a href="{% url 'resident_book_facility' f.pk %}" class="btn btn-primary btn-full">
+                    📅 Book Now
+                </a>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🏢</div>
+            <div class="empty-title">No facilities available</div>
+            <div class="empty-desc">Contact admin to add facilities</div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

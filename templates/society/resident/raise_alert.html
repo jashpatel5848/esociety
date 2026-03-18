@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Emergency Alert — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">🚨 Emergency Alert</h2>
+            <p class="page-header-subtitle">Raise an emergency alert to notify security and residents</p>
+        </div>
+        <a href="{% url 'resident_dashboard' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <!-- Emergency Contacts -->
+    <div style="background:#FFF7F7;border:1px solid #FECACA;border-radius:16px;padding:24px;margin-bottom:24px;">
+        <div style="font-family:var(--font-display);font-size:1.125rem;font-weight:700;color:#0F172A;margin-bottom:16px;">
+            📞 Quick Emergency Contacts
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a href="tel:100" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;background:#FEE2E2;color:#EF4444;border:1px solid #FECACA;font-weight:600;font-size:0.875rem;text-decoration:none;">
+                🚔 Police — 100
+            </a>
+            <a href="tel:101" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;background:#FEE2E2;color:#EF4444;border:1px solid #FECACA;font-weight:600;font-size:0.875rem;text-decoration:none;">
+                🔥 Fire — 101
+            </a>
+            <a href="tel:108" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;background:#FEF3C7;color:#F59E0B;border:1px solid #FDE68A;font-weight:600;font-size:0.875rem;text-decoration:none;">
+                🚑 Ambulance — 108
+            </a>
+        </div>
+    </div>
+
+    <div class="card" style="max-width:540px;">
+        <div class="card-header">
+            <div class="card-title">🚨 Raise Alert</div>
+            <div class="card-subtitle">Alert will be sent to all security and admin</div>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Alert Type <span style="color:#EF4444;">*</span></label>
+                <select name="alert_type" class="form-control" required>
+                    <option value="fire">🔥 Fire</option>
+                    <option value="unauthorized">🚨 Unauthorized Entry</option>
+                    <option value="medical">🚑 Medical Emergency</option>
+                    <option value="other">⚠️ Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description <span style="color:#EF4444;">*</span></label>
+                <textarea name="description" class="form-control" rows="4"
+                    placeholder="Describe the emergency situation..." required></textarea>
+            </div>
+
+            <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;">
+                <p style="font-size:0.8125rem;color:#EF4444;font-weight:600;">
+                    ⚠️ Only raise alert in case of real emergency. False alerts may result in action.
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <a href="{% url 'resident_dashboard' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('Are you sure you want to raise an emergency alert?')">
+                    🚨 Raise Emergency Alert
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

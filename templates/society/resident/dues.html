@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}My Dues — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">My Dues</h2>
+            <p class="page-header-subtitle">Maintenance payment history</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">💰 Maintenance Dues</div>
+            <div class="card-subtitle">Total: {{ dues|length }}</div>
+        </div>
+        {% if dues %}
+        <div style="display:flex;flex-direction:column;gap:12px;">
+            {% for d in dues %}
+            <div style="padding:16px;background:var(--bg-elevated);border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;">
+                <div style="font-size:1.75rem;">💰</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;font-size:1rem;color:var(--text-primary);margin-bottom:4px;">
+                        {{ d.month }}
+                    </div>
+                    <div style="font-size:0.875rem;color:var(--text-secondary);">
+                        Due Date: {{ d.due_date|date:"d M Y" }}
+                    </div>
+                    {% if d.paid_on %}
+                    <small style="color:var(--text-muted);">
+                        Paid on: {{ d.paid_on|date:"d M Y, H:i" }}
+                    </small>
+                    {% endif %}
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="text-align:right;">
+                        <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:800;color:{% if d.status == 'paid' %}var(--primary){% else %}var(--accent){% endif %};">
+                            ₹{{ d.amount }}
+                        </div>
+                    </div>
+                    {% if d.status == 'paid' %}
+                        <span class="badge badge-success">Paid</span>
+                    {% else %}
+                        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                            <span class="badge badge-danger">Unpaid</span>
+                            <a href="{% url 'resident_pay_due' d.pk %}" class="btn btn-primary btn-sm"
+                               onclick="return confirm('Pay ₹{{ d.amount }} for {{ d.month }}?')">
+                               Pay Now
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">✅</div>
+            <div class="empty-title">No dues!</div>
+            <div class="empty-desc">You have no pending maintenance dues</div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

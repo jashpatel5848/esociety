@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}My Complaints — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">My Complaints</h2>
+            <p class="page-header-subtitle">Track all your raised complaints</p>
+        </div>
+        <a href="{% url 'resident_add_complaint' %}" class="btn btn-primary">+ Raise Complaint</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">🔧 Complaint List</div>
+            <div class="card-subtitle">Total: {{ complaints|length }}</div>
+        </div>
+        {% if complaints %}
+        <div style="display:flex;flex-direction:column;gap:12px;">
+            {% for c in complaints %}
+            <div style="padding:16px;background:var(--bg-elevated);border-radius:12px;border:1px solid var(--border);border-left:3px solid {% if c.status == 'open' %}#EF4444{% elif c.status == 'in_progress' %}#F59E0B{% elif c.status == 'resolved' %}#10B981{% else %}var(--border){% endif %};">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+                    <div style="flex:1;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                            <span style="font-weight:700;font-size:1rem;color:var(--text-primary);">{{ c.title }}</span>
+                            <span class="badge badge-neutral">{{ c.get_category_display }}</span>
+                        </div>
+                        <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:8px;">
+                            {{ c.description|truncatechars:120 }}
+                        </p>
+                        {% if c.remark %}
+                        <div style="background:rgba(30,111,241,0.06);border:1px solid rgba(30,111,241,0.2);border-radius:8px;padding:8px 12px;margin-bottom:8px;">
+                            <div style="font-size:0.75rem;font-weight:600;color:#1E6FF1;margin-bottom:2px;">Admin Remark</div>
+                            <p style="font-size:0.8125rem;color:var(--text-secondary);">{{ c.remark }}</p>
+                        </div>
+                        {% endif %}
+                        <small style="color:var(--text-muted);">{{ c.created_at|date:"d M Y, H:i" }}</small>
+                    </div>
+                    <div style="flex-shrink:0;">
+                        {% if c.status == 'open' %}
+                            <span class="badge badge-danger">Open</span>
+                        {% elif c.status == 'in_progress' %}
+                            <span class="badge badge-warning">In Progress</span>
+                        {% elif c.status == 'resolved' %}
+                            <span class="badge badge-success">Resolved</span>
+                        {% else %}
+                            <span class="badge badge-neutral">{{ c.status }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">✅</div>
+            <div class="empty-title">No complaints raised</div>
+            <div class="empty-desc">Raise a complaint from the button above</div>
+            <a href="{% url 'resident_add_complaint' %}" class="btn btn-primary" style="margin-top:16px;">+ Raise Complaint</a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

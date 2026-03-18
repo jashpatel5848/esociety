@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Notices — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Notice Board</h2>
+            <p class="page-header-subtitle">All notices posted to residents</p>
+        </div>
+        <a href="{% url 'admin_add_notice' %}" class="btn btn-primary">+ Post Notice</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">📢 Notices</div>
+            <div class="card-subtitle">Total: {{ notices|length }}</div>
+        </div>
+        {% if notices %}
+        <div style="display:flex;flex-direction:column;gap:14px;">
+            {% for n in notices %}
+            <div style="padding:16px;background:var(--bg-elevated);border-radius:12px;border:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+                <div style="flex:1;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <span style="font-weight:700;font-size:1rem;color:var(--text-primary);">{{ n.title }}</span>
+                        {% if n.notice_type == 'emergency' %}
+                            <span class="badge badge-danger">{{ n.get_notice_type_display }}</span>
+                        {% elif n.notice_type == 'event' %}
+                            <span class="badge badge-info">{{ n.get_notice_type_display }}</span>
+                        {% elif n.notice_type == 'meeting' %}
+                            <span class="badge badge-warning">{{ n.get_notice_type_display }}</span>
+                        {% else %}
+                            <span class="badge badge-neutral">{{ n.get_notice_type_display }}</span>
+                        {% endif %}
+                        {% if n.is_active %}
+                            <span class="badge badge-success">Active</span>
+                        {% else %}
+                            <span class="badge badge-neutral">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:8px;">{{ n.content }}</p>
+                    <small style="color:var(--text-muted);">
+                        Posted by {{ n.posted_by.first_name|default:n.posted_by.email }} — {{ n.created_at|date:"d M Y, H:i" }}
+                    </small>
+                </div>
+                <a href="{% url 'admin_delete_notice' n.pk %}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Delete this notice?')"
+                   style="flex-shrink:0;">
+                   Delete
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📢</div>
+            <div class="empty-title">No notices yet</div>
+            <div class="empty-desc">Post a notice from the button above</div>
+            <a href="{% url 'admin_add_notice' %}" class="btn btn-primary" style="margin-top:16px;">+ Post First Notice</a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

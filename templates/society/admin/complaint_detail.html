@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Update Complaint — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Update Complaint</h2>
+            <p class="page-header-subtitle">Review and update complaint status</p>
+        </div>
+        <a href="{% url 'admin_complaint_list' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+        <!-- Complaint Details -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">📋 Complaint Details</div>
+                {% if complaint.status == 'open' %}
+                    <span class="badge badge-danger">Open</span>
+                {% elif complaint.status == 'in_progress' %}
+                    <span class="badge badge-warning">In Progress</span>
+                {% elif complaint.status == 'resolved' %}
+                    <span class="badge badge-success">Resolved</span>
+                {% else %}
+                    <span class="badge badge-neutral">{{ complaint.status }}</span>
+                {% endif %}
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div>
+                    <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Title</div>
+                    <div style="font-weight:600;color:var(--text-primary);">{{ complaint.title }}</div>
+                </div>
+                <div>
+                    <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Category</div>
+                    <span class="badge badge-neutral">{{ complaint.get_category_display }}</span>
+                </div>
+                <div>
+                    <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Description</div>
+                    <p style="font-size:0.9rem;">{{ complaint.description }}</p>
+                </div>
+                <div>
+                    <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Resident</div>
+                    <div style="font-weight:600;color:var(--text-primary);">
+                        {{ complaint.resident.user.first_name }} {{ complaint.resident.user.last_name }}
+                    </div>
+                    <small style="color:var(--text-muted);">
+                        {{ complaint.resident.user.email }}
+                        {% if complaint.resident.flat %} — Flat {{ complaint.resident.flat.flat_number }}{% endif %}
+                    </small>
+                </div>
+                <div>
+                    <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Raised On</div>
+                    <div style="color:var(--text-secondary);">{{ complaint.created_at|date:"d M Y, H:i" }}</div>
+                </div>
+                {% if complaint.image %}
+                <div>
+                    <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Attached Image</div>
+                    <img src="{{ complaint.image.url }}" style="max-width:100%;border-radius:10px;border:1px solid var(--border);"/>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Update Form -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">✏️ Update Status</div>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label class="form-label">Status <span style="color:#EF4444;">*</span></label>
+                    <select name="status" class="form-control" required>
+                        <option value="open" {% if complaint.status == 'open' %}selected{% endif %}>Open</option>
+                        <option value="in_progress" {% if complaint.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                        <option value="resolved" {% if complaint.status == 'resolved' %}selected{% endif %}>Resolved</option>
+                        <option value="closed" {% if complaint.status == 'closed' %}selected{% endif %}>Closed</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Admin Remark</label>
+                    <textarea name="remark" class="form-control" rows="4"
+                        placeholder="Add a note or update for the resident...">{{ complaint.remark|default:'' }}</textarea>
+                </div>
+
+                {% if complaint.remark %}
+                <div style="padding:12px;background:var(--bg-elevated);border-radius:10px;border-left:3px solid var(--primary);margin-bottom:16px;">
+                    <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);margin-bottom:4px;">Previous Remark</div>
+                    <p style="font-size:0.875rem;">{{ complaint.remark }}</p>
+                </div>
+                {% endif %}
+
+                <div class="card-footer">
+                    <a href="{% url 'admin_complaint_list' %}" class="btn btn-ghost">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Update Complaint</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

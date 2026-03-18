@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}My Bookings — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">My Bookings</h2>
+            <p class="page-header-subtitle">All your facility bookings</p>
+        </div>
+        <a href="{% url 'resident_facility_list' %}" class="btn btn-primary">+ New Booking</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">📅 Booking List</div>
+            <div class="card-subtitle">Total: {{ bookings|length }}</div>
+        </div>
+        {% if bookings %}
+        <div style="display:flex;flex-direction:column;gap:12px;">
+            {% for b in bookings %}
+            <div style="padding:16px;background:var(--bg-elevated);border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;">
+                <div style="font-size:1.75rem;">
+                    {% if 'gym' in b.facility.name|lower %}🏋️
+                    {% elif 'pool' in b.facility.name|lower %}🏊
+                    {% elif 'hall' in b.facility.name|lower %}🏛️
+                    {% else %}🏢{% endif %}
+                </div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;font-size:1rem;color:var(--text-primary);margin-bottom:4px;">
+                        {{ b.facility.name }}
+                    </div>
+                    <div style="font-size:0.875rem;color:var(--text-secondary);">
+                        📅 {{ b.date|date:"d M Y" }} &nbsp;|&nbsp;
+                        ⏰ {{ b.start_time|time:"H:i" }} - {{ b.end_time|time:"H:i" }}
+                    </div>
+                    <small style="color:var(--text-muted);">
+                        Booked on {{ b.created_at|date:"d M Y" }} &nbsp;|&nbsp;
+                        💰 ₹{{ b.amount_paid }}
+                    </small>
+                </div>
+                <div>
+                    {% if b.status == 'confirmed' %}
+                        <span class="badge badge-success">Confirmed</span>
+                    {% elif b.status == 'pending' %}
+                        <span class="badge badge-warning">Pending</span>
+                    {% elif b.status == 'cancelled' %}
+                        <span class="badge badge-danger">Cancelled</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📅</div>
+            <div class="empty-title">No bookings yet</div>
+            <div class="empty-desc">Book a facility from the button above</div>
+            <a href="{% url 'resident_facility_list' %}" class="btn btn-primary" style="margin-top:16px;">+ Book Facility</a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

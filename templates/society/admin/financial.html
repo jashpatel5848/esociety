@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block title %}Financial — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Financial Management</h2>
+            <p class="page-header-subtitle">Track dues, expenses and society funds</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <a href="{% url 'admin_add_due' %}" class="btn btn-secondary btn-sm">+ Add Due</a>
+            <a href="{% url 'admin_add_expense' %}" class="btn btn-primary btn-sm">+ Add Expense</a>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-4 mb-xl">
+        <div class="stat-card stat-card-teal">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value">₹{{ total_collected }}</div>
+            <div class="stat-label">Total Collected</div>
+        </div>
+        <div class="stat-card stat-card-red">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-value">₹{{ total_pending }}</div>
+            <div class="stat-label">Pending Dues</div>
+        </div>
+        <div class="stat-card stat-card-yellow">
+            <div class="stat-icon">📊</div>
+            <div class="stat-value">₹{{ total_expenses }}</div>
+            <div class="stat-label">Total Expenses</div>
+        </div>
+        <div class="stat-card stat-card-blue">
+            <div class="stat-icon">🏦</div>
+            <div class="stat-value">₹{{ balance }}</div>
+            <div class="stat-label">Balance</div>
+        </div>
+    </div>
+
+    <div class="grid grid-2 mb-xl">
+
+        <!-- Maintenance Dues -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">💰 Maintenance Dues</div>
+                    <div class="card-subtitle">All resident dues</div>
+                </div>
+                <a href="{% url 'admin_add_due' %}" class="btn btn-primary btn-sm">+ Add</a>
+            </div>
+            {% if dues %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resident</th>
+                            <th>Month</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in dues %}
+                        <tr>
+                            <td>
+                                <div style="font-weight:600;font-size:0.875rem;color:var(--text-primary);">
+                                    {{ d.resident.user.first_name }} {{ d.resident.user.last_name }}
+                                </div>
+                                <small style="color:var(--text-muted);">
+                                    {% if d.resident.flat %}Flat {{ d.resident.flat.flat_number }}{% endif %}
+                                </small>
+                            </td>
+                            <td>{{ d.month }}</td>
+                            <td style="font-weight:600;">₹{{ d.amount }}</td>
+                            <td>{{ d.due_date|date:"d M Y" }}</td>
+                            <td>
+                                {% if d.status == 'paid' %}
+                                    <span class="badge badge-success">Paid</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Unpaid</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state" style="padding:24px;">
+                <div class="empty-icon">💰</div>
+                <div class="empty-title">No dues added yet</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Expenses -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">📊 Society Expenses</div>
+                    <div class="card-subtitle">All society expenses</div>
+                </div>
+                <a href="{% url 'admin_add_expense' %}" class="btn btn-primary btn-sm">+ Add</a>
+            </div>
+            {% if expenses %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in expenses %}
+                        <tr>
+                            <td style="font-weight:600;color:var(--text-primary);">{{ e.title }}</td>
+                            <td><span class="badge badge-neutral">{{ e.get_category_display }}</span></td>
+                            <td style="font-weight:600;color:var(--accent);">₹{{ e.amount }}</td>
+                            <td>{{ e.date|date:"d M Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state" style="padding:24px;">
+                <div class="empty-icon">📊</div>
+                <div class="empty-title">No expenses added yet</div>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

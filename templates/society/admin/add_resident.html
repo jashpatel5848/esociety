@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Add Resident — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Add Resident</h2>
+            <p class="page-header-subtitle">Create a new resident account and assign flat</p>
+        </div>
+        <a href="{% url 'admin_resident_list' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <div class="card" style="max-width:600px;">
+        <div class="card-header">
+            <div class="card-title">👤 Resident Details</div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="form-group">
+                    <label class="form-label">First Name <span style="color:#EF4444;">*</span></label>
+                    <input type="text" name="first_name" class="form-control" placeholder="Jash" required/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name <span style="color:#EF4444;">*</span></label>
+                    <input type="text" name="last_name" class="form-control" placeholder="Patel" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email <span style="color:#EF4444;">*</span></label>
+                <input type="email" name="email" class="form-control" placeholder="resident@email.com" required/>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="form-group">
+                    <label class="form-label">Mobile</label>
+                    <input type="text" name="mobile" class="form-control" placeholder="9876543210" maxlength="10"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password <span style="color:#EF4444;">*</span></label>
+                    <input type="password" name="password" class="form-control" placeholder="Min 8 characters" required/>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="form-group">
+                    <label class="form-label">Society <span style="color:#EF4444;">*</span></label>
+                    <select name="society" class="form-control" required>
+                        <option value="">-- Select Society --</option>
+                        {% for s in societies %}
+                        <option value="{{ s.pk }}">{{ s.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Flat <span style="color:#EF4444;">*</span></label>
+                    <select name="flat" class="form-control" required>
+                        <option value="">-- Select Flat --</option>
+                        {% for f in flats %}
+                        <option value="{{ f.pk }}">Flat {{ f.flat_number }} (Floor {{ f.floor }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="{% url 'admin_resident_list' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-primary">Add Resident</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

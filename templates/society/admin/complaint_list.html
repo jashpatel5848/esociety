@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Complaints — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Complaints</h2>
+            <p class="page-header-subtitle">All complaints raised by residents</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+            <a href="?status=open" class="btn {% if status_filter == 'open' %}btn-primary{% else %}btn-ghost{% endif %} btn-sm">Open</a>
+            <a href="?status=in_progress" class="btn {% if status_filter == 'in_progress' %}btn-primary{% else %}btn-ghost{% endif %} btn-sm">In Progress</a>
+            <a href="?status=resolved" class="btn {% if status_filter == 'resolved' %}btn-primary{% else %}btn-ghost{% endif %} btn-sm">Resolved</a>
+            <a href="?" class="btn {% if not status_filter %}btn-primary{% else %}btn-ghost{% endif %} btn-sm">All</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">🔧 Complaint List</div>
+            <div class="card-subtitle">Total: {{ complaints|length }}</div>
+        </div>
+        {% if complaints %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Resident</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in complaints %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <div style="font-weight:600;color:var(--text-primary);">
+                                {{ c.resident.user.first_name }} {{ c.resident.user.last_name }}
+                            </div>
+                            <small style="color:var(--text-muted);">
+                                {% if c.resident.flat %}Flat {{ c.resident.flat.flat_number }}{% endif %}
+                            </small>
+                        </td>
+                        <td>{{ c.title }}</td>
+                        <td>
+                            <span class="badge badge-neutral">{{ c.get_category_display }}</span>
+                        </td>
+                        <td>
+                            {% if c.status == 'open' %}
+                                <span class="badge badge-danger">Open</span>
+                            {% elif c.status == 'in_progress' %}
+                                <span class="badge badge-warning">In Progress</span>
+                            {% elif c.status == 'resolved' %}
+                                <span class="badge badge-success">Resolved</span>
+                            {% else %}
+                                <span class="badge badge-neutral">{{ c.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ c.created_at|date:"d M Y" }}</td>
+                        <td>
+                            <a href="{% url 'admin_complaint_update' c.pk %}" class="btn btn-ghost btn-sm">Update</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">✅</div>
+            <div class="empty-title">No complaints found</div>
+            <div class="empty-desc">No complaints raised yet</div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

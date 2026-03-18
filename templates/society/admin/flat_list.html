@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Flats — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Flats</h2>
+            <p class="page-header-subtitle">All flats in the society</p>
+        </div>
+        <a href="{% url 'admin_add_flat' %}" class="btn btn-primary">+ Add Flat</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">🏢 Flat List</div>
+            <div class="card-subtitle">Total: {{ flats|length }}</div>
+        </div>
+        {% if flats %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Flat Number</th>
+                        <th>Floor</th>
+                        <th>Society</th>
+                        <th>Status</th>
+                        <th>Resident</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in flats %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <div style="font-weight:600;color:var(--text-primary);">
+                                Flat {{ f.flat_number }}
+                            </div>
+                        </td>
+                        <td>Floor {{ f.floor }}</td>
+                        <td>{{ f.society.name }}</td>
+                        <td>
+                            {% if f.status == 'occupied' %}
+                                <span class="badge badge-success">Occupied</span>
+                            {% else %}
+                                <span class="badge badge-neutral">Vacant</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if f.residents.first %}
+                                {{ f.residents.first.user.first_name }} {{ f.residents.first.user.last_name }}
+                            {% else %}
+                                <span style="color:var(--text-muted);">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🏢</div>
+            <div class="empty-title">No flats yet</div>
+            <div class="empty-desc">Add flats from the button above</div>
+            <a href="{% url 'admin_add_flat' %}" class="btn btn-primary" style="margin-top:16px;">+ Add First Flat</a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

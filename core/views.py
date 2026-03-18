@@ -5,13 +5,37 @@ from django.core.mail import send_mail,EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
 import os
+from society.models import ResidentProfile, GuardProfile, Society
 
 # Create your views here.
 def userSignupView(request): 
+    if request.user.is_authenticated:
+        if request.user.role == "admin":
+            return redirect("admin_dashboard")
+        elif request.user.role == "resident":
+            return redirect("resident_dashboard")
+        elif request.user.role == "guard":
+            return redirect("guard_dashboard")
+        
     if request.method == "POST":
         form = UserSignupForm(request.POST or None)
         if form.is_valid():
-           
+            user = form.save()
+            
+
+            # Role ke hisaab se profile banao
+            society = Society.objects.first()
+
+            if user.role == 'resident':
+                ResidentProfile.objects.create(
+                    user=user,
+                    society=society,
+                )
+            elif user.role == 'guard':
+                GuardProfile.objects.create(
+                    user=user,
+                    society=society,
+                )
            
             #email send
             email = form.cleaned_data['email']
@@ -39,7 +63,7 @@ def userSignupView(request):
 
 
 
-            form.save()
+
             return redirect("login")
         else:  
             return render(request, 'core/signup.html', {'form': form})    
@@ -49,6 +73,15 @@ def userSignupView(request):
 
 
 def userLoginView(request):
+    # Agar already logged in hai toh redirect 
+    if request.user.is_authenticated:
+        if request.user.role == "admin":
+            return redirect("admin_dashboard")
+        elif request.user.role == "resident":
+            return redirect("resident_dashboard")
+        elif request.user.role == "guard":
+            return redirect("guard_dashboard")
+        
     if request.method =="POST":  
         form = UserLoginForm(request.POST or None)
         if form.is_valid():
@@ -68,15 +101,25 @@ def userLoginView(request):
                     return redirect("guard_dashboard")
 
             else:
-                return render(request,'core/login.html',{'form':form})
+                return render(request,'core/login.html', {'form': form, 'error': 'Invalid email or password!'})
 
     else: 
         form = UserLoginForm()
         return render(request,'core/login.html',{'form': form}) 
+
+
     
 def userLogoutView(request):
     logout(request)             #user ka sessio clear
     return redirect('login')
 
+
 def userHomepageView(request):
+    if request.user.is_authenticated:
+        if request.user.role == "admin":
+            return redirect("admin_dashboard")
+        elif request.user.role == "resident":
+            return redirect("resident_dashboard")
+        elif request.user.role == "guard":
+            return redirect("guard_dashboard")  
     return render(request, 'home.html')

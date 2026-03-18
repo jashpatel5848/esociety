@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}My Visitors — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">My Visitors</h2>
+            <p class="page-header-subtitle">Manage your visitor approvals</p>
+        </div>
+        <a href="{% url 'resident_add_visitor' %}" class="btn btn-primary">+ Pre-approve Visitor</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">🚪 Visitor List</div>
+            <div class="card-subtitle">Total: {{ visitors|length }}</div>
+        </div>
+        {% if visitors %}
+        <div style="display:flex;flex-direction:column;gap:12px;">
+            {% for v in visitors %}
+            <div class="entry-card">
+                <div style="font-size:1.75rem;">
+                    {% if v.purpose == 'delivery' %}📦
+                    {% elif v.purpose == 'maintenance' %}🔧
+                    {% elif v.purpose == 'guest' %}🧑
+                    {% else %}👤{% endif %}
+                </div>
+                <div class="entry-info">
+                    <div class="entry-name">{{ v.name }}</div>
+                    <div class="entry-meta">
+                        📞 {{ v.mobile }} &nbsp;|&nbsp;
+                        {{ v.get_purpose_display }}
+                        {% if v.vehicle_number %}&nbsp;|&nbsp; 🚗 {{ v.vehicle_number }}{% endif %}
+                    </div>
+                    <small style="color:var(--text-muted);">
+                        {{ v.created_at|date:"d M Y, H:i" }}
+                        {% if v.entry_time %} | In: {{ v.entry_time|time:"H:i" }}{% endif %}
+                        {% if v.exit_time %} | Out: {{ v.exit_time|time:"H:i" }}{% endif %}
+                    </small>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+                    {% if v.status == 'pending' %}
+                        <span class="badge badge-warning">Pending</span>
+                        <div style="display:flex;gap:6px;">
+                            <a href="{% url 'resident_approve_visitor' v.pk %}" class="btn btn-primary btn-sm">✅ Approve</a>
+                            <a href="{% url 'resident_deny_visitor' v.pk %}" class="btn btn-danger btn-sm">❌ Deny</a>
+                        </div>
+                    {% elif v.status == 'approved' %}
+                        <span class="badge badge-success">Approved</span>
+                        <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:6px 12px;text-align:center;">
+                            <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:2px;">OTP</div>
+                            <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:800;letter-spacing:0.2em;color:var(--primary);">{{ v.otp }}</div>
+                        </div>
+                    {% elif v.status == 'denied' %}
+                        <span class="badge badge-danger">Denied</span>
+                    {% elif v.status == 'exited' %}
+                        <span class="badge badge-neutral">Exited</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🚪</div>
+            <div class="empty-title">No visitors yet</div>
+            <div class="empty-desc">Pre-approve visitors from the button above</div>
+            <a href="{% url 'resident_add_visitor' %}" class="btn btn-primary" style="margin-top:16px;">+ Pre-approve Visitor</a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

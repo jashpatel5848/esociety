@@ -1,7 +1,188 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
+{% comment %} {% extends "base.html" %}
 {% block content %}
 <h1>ADMIN DASHBOARD</h1>
 {{request.user.role}}
 <p>{{request.user}}</p>
-{% endblock content %}
+{% endblock content %} {% endcomment %}
+
+
+
+{% block title %}Admin Dashboard — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Admin Dashboard</h2>
+            <p class="page-header-subtitle">Welcome back, {{ request.user.first_name|default:request.user.email }} 👋</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <a href="{% url 'admin_add_notice' %}" class="btn btn-secondary btn-sm">📢 Post Notice</a>
+            <a href="{% url 'admin_add_resident' %}" class="btn btn-primary btn-sm">+ Add Resident</a>
+        </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="grid grid-4 mb-xl">
+        <div class="stat-card stat-card-teal">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">{{ total_residents }}</div>
+            <div class="stat-label">Total Residents</div>
+        </div>
+        <div class="stat-card stat-card-blue">
+            <div class="stat-icon">🏢</div>
+            <div class="stat-value">{{ total_flats }}</div>
+            <div class="stat-label">Total Flats
+                <span style="color:var(--accent);font-size:0.75rem;margin-left:6px;">({{ vacant_flats }} vacant)</span>
+            </div>
+        </div>
+        <div class="stat-card stat-card-yellow">
+            <div class="stat-icon">🔧</div>
+            <div class="stat-value">{{ open_complaints }}</div>
+            <div class="stat-label">Open Complaints</div>
+        </div>
+        <div class="stat-card stat-card-red">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value">{{ pending_dues }}</div>
+            <div class="stat-label">Pending Dues</div>
+        </div>
+    </div>
+
+    <!-- Emergency Alerts -->
+    {% if recent_alerts %}
+    <div class="mb-xl">
+        {% for alert in recent_alerts %}
+        <div class="alert alert-danger">
+            <span class="alert-icon">🚨</span>
+            <div class="alert-content">
+                <div class="alert-title">{{ alert.get_alert_type_display }}</div>
+                {{ alert.description }}
+                <small style="color:var(--text-muted);">{{ alert.created_at|timesince }} ago</small>
+            </div>
+            <a href="{% url 'admin_resolve_alert' alert.pk %}" class="btn btn-danger btn-sm">Resolve</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="grid grid-2 mb-xl">
+
+        <!-- Recent Complaints -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">🔧 Recent Complaints</div>
+                    <div class="card-subtitle">Latest issues raised by residents</div>
+                </div>
+                <a href="{% url 'admin_complaint_list' %}" class="btn btn-ghost btn-sm">View All</a>
+            </div>
+            {% if recent_complaints %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resident</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in recent_complaints %}
+                        <tr>
+                            <td>
+                                {{ c.resident.user.first_name|default:c.resident.user.email }}<br>
+                                <small style="color:var(--text-muted);">Flat {{ c.resident.flat.flat_number }}</small>
+                            </td>
+                            <td>{{ c.title }}</td>
+                            <td>
+                                {% if c.status == 'open' %}
+                                    <span class="badge badge-danger">Open</span>
+                                {% elif c.status == 'in_progress' %}
+                                    <span class="badge badge-warning">In Progress</span>
+                                {% elif c.status == 'resolved' %}
+                                    <span class="badge badge-success">Resolved</span>
+                                {% else %}
+                                    <span class="badge badge-neutral">{{ c.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'admin_complaint_update' c.pk %}" class="btn btn-ghost btn-sm">Update</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">✅</div>
+                <div class="empty-title">No open complaints</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Notices -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">📢 Recent Notices</div>
+                    <div class="card-subtitle">Posted to all residents</div>
+                </div>
+                <a href="{% url 'admin_add_notice' %}" class="btn btn-primary btn-sm">+ Add</a>
+            </div>
+            {% if recent_notices %}
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                {% for n in recent_notices %}
+                <div style="padding:12px;background:var(--bg-elevated);border-radius:10px;border:1px solid var(--border);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                        <span style="font-weight:600;font-size:0.9rem;color:var(--text-primary);">{{ n.title }}</span>
+                        {% if n.notice_type == 'emergency' %}
+                            <span class="badge badge-danger">{{ n.get_notice_type_display }}</span>
+                        {% elif n.notice_type == 'event' %}
+                            <span class="badge badge-info">{{ n.get_notice_type_display }}</span>
+                        {% elif n.notice_type == 'meeting' %}
+                            <span class="badge badge-warning">{{ n.get_notice_type_display }}</span>
+                        {% else %}
+                            <span class="badge badge-neutral">{{ n.get_notice_type_display }}</span>
+                        {% endif %}
+                    </div>
+                    <p style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:8px;">{{ n.content|truncatechars:80 }}</p>
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <small style="color:var(--text-muted);">{{ n.created_at|date:"d M Y" }}</small>
+                        <a href="{% url 'admin_delete_notice' n.pk %}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('Delete this notice?')">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📢</div>
+                <div class="empty-title">No notices yet</div>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">⚡ Quick Actions</div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a href="{% url 'admin_add_resident' %}"  class="btn btn-secondary">👤 Add Resident</a>
+            <a href="{% url 'admin_add_flat' %}"      class="btn btn-secondary">🏢 Add Flat</a>
+            <a href="{% url 'admin_add_due' %}"       class="btn btn-secondary">💰 Add Due</a>
+            <a href="{% url 'admin_add_expense' %}"   class="btn btn-secondary">📊 Add Expense</a>
+            <a href="{% url 'admin_add_facility' %}"  class="btn btn-secondary">🏋️ Add Facility</a>
+            <a href="{% url 'admin_visitor_list' %}"  class="btn btn-secondary">🚪 View Visitors</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

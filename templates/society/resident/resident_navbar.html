@@ -1,4 +1,4 @@
-<nav class="navbar">
+{% comment %} <nav class="navbar">
 
     <div class="logo">
         <a href="{% url 'resident_dashboard' %}">e-Society Resident</a>
@@ -35,4 +35,36 @@
         </form>
     </div>
 
+</nav> {% endcomment %}
+
+
+{% load static %}
+<nav class="navbar">
+    <div class="navbar-logo">
+        <a href="{% url 'resident_dashboard' %}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <div class="navbar-logo-icon">eS</div>
+            <span style="font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--text-primary);">
+                e-<span style="color:var(--primary);">Society</span>
+                <small style="display:block;font-size:0.65rem;font-weight:500;color:var(--text-muted);margin-top:-2px;">Resident Portal</small>
+            </span>
+        </a>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="{% url 'resident_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'resident_dashboard' %}active{% endif %}">🏠 Dashboard</a></li>
+        <li><a href="{% url 'resident_visitor_list' %}" class="nav-item {% if 'visitor' in request.resolver_match.url_name %}active{% endif %}">🚪 Visitors</a></li>
+        <li><a href="{% url 'resident_complaint_list' %}" class="nav-item {% if 'complaint' in request.resolver_match.url_name %}active{% endif %}">🔧 Complaints</a></li>
+        <li><a href="{% url 'resident_facility_list' %}" class="nav-item {% if 'facilit' in request.resolver_match.url_name %}active{% endif %}">🏋️ Facilities</a></li>
+        <li><a href="{% url 'resident_dues' %}" class="nav-item {% if 'dues' in request.resolver_match.url_name %}active{% endif %}">💰 Dues</a></li>
+        <li><a href="{% url 'resident_notice_list' %}" class="nav-item {% if 'notice' in request.resolver_match.url_name %}active{% endif %}">📢 Notices</a></li>
+        <li><a href="{% url 'resident_raise_alert' %}" class="nav-item {% if 'alert' in request.resolver_match.url_name %}active{% endif %}" style="color:var(--accent);">🚨 Emergency</a></li>
+    </ul>
+
+    <div class="nav-right">
+        <span class="user-name">👤 {{ request.user.first_name|default:request.user.email }}</span>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost btn-sm">Logout</button>
+        </form>
+    </div>
 </nav>

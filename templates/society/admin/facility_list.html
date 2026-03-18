@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Facilities — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Facilities</h2>
+            <p class="page-header-subtitle">All society amenities and facilities</p>
+        </div>
+        <a href="{% url 'admin_add_facility' %}" class="btn btn-primary">+ Add Facility</a>
+    </div>
+
+    <div class="grid grid-auto">
+        {% if facilities %}
+            {% for f in facilities %}
+            <div class="card card-glow">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                    <div style="font-size:2rem;">
+                        {% if 'gym' in f.name|lower %}🏋️
+                        {% elif 'pool' in f.name|lower %}🏊
+                        {% elif 'hall' in f.name|lower %}🏛️
+                        {% elif 'park' in f.name|lower %}🌳
+                        {% elif 'club' in f.name|lower %}🎯
+                        {% else %}🏢{% endif %}
+                    </div>
+                    {% if f.is_active %}
+                        <span class="badge badge-success">Active</span>
+                    {% else %}
+                        <span class="badge badge-neutral">Inactive</span>
+                    {% endif %}
+                </div>
+                <div style="font-family:var(--font-display);font-size:1.125rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;">
+                    {{ f.name }}
+                </div>
+                <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:14px;">
+                    {{ f.description|default:"No description" }}
+                </p>
+                <div style="display:flex;gap:16px;margin-bottom:14px;">
+                    <div>
+                        <div style="font-size:0.75rem;color:var(--text-muted);">Capacity</div>
+                        <div style="font-weight:600;color:var(--text-primary);">{{ f.capacity }} persons</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.75rem;color:var(--text-muted);">Price</div>
+                        <div style="font-weight:600;color:var(--primary);">₹{{ f.price }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🏢</div>
+            <div class="empty-title">No facilities yet</div>
+            <div class="empty-desc">Add facilities from the button above</div>
+            <a href="{% url 'admin_add_facility' %}" class="btn btn-primary" style="margin-top:16px;">+ Add First Facility</a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

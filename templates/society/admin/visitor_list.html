@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Visitors — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Visitor Log</h2>
+            <p class="page-header-subtitle">All visitor entries in the society</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">🚪 Visitors</div>
+            <div class="card-subtitle">Total: {{ visitors|length }}</div>
+        </div>
+        {% if visitors %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Visitor</th>
+                        <th>Purpose</th>
+                        <th>Resident</th>
+                        <th>Flat</th>
+                        <th>Status</th>
+                        <th>Entry</th>
+                        <th>Exit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in visitors %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <div style="font-weight:600;color:var(--text-primary);">{{ v.name }}</div>
+                            <small style="color:var(--text-muted);">📞 {{ v.mobile }}</small>
+                        </td>
+                        <td>
+                            <span class="badge badge-neutral">{{ v.get_purpose_display }}</span>
+                        </td>
+                        <td>{{ v.resident.user.first_name }} {{ v.resident.user.last_name }}</td>
+                        <td>
+                            {% if v.resident.flat %}
+                                Flat {{ v.resident.flat.flat_number }}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td>
+                            {% if v.status == 'approved' %}
+                                <span class="badge badge-success">Approved</span>
+                            {% elif v.status == 'pending' %}
+                                <span class="badge badge-warning">Pending</span>
+                            {% elif v.status == 'denied' %}
+                                <span class="badge badge-danger">Denied</span>
+                            {% elif v.status == 'exited' %}
+                                <span class="badge badge-neutral">Exited</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if v.entry_time %}
+                                {{ v.entry_time|date:"d M, H:i" }}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td>
+                            {% if v.exit_time %}
+                                {{ v.exit_time|date:"d M, H:i" }}
+                            {% else %}—{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🚪</div>
+            <div class="empty-title">No visitors yet</div>
+            <div class="empty-desc">Visitor entries will appear here</div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

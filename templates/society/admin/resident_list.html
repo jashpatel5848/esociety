@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Residents — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Residents</h2>
+            <p class="page-header-subtitle">All registered residents of the society</p>
+        </div>
+        <a href="{% url 'admin_add_resident' %}" class="btn btn-primary">+ Add Resident</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">👥 Resident List</div>
+            <div class="card-subtitle">Total: {{ residents|length }}</div>
+        </div>
+        {% if residents %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Flat</th>
+                        <th>Society</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in residents %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <div style="font-weight:600;color:var(--text-primary);">
+                                {{ r.user.first_name }} {{ r.user.last_name }}
+                            </div>
+                        </td>
+                        <td>{{ r.user.email }}</td>
+                        <td>{{ r.user.mobile|default:"—" }}</td>
+                        <td>
+                            {% if r.flat %}
+                                <span class="badge badge-success">Flat {{ r.flat.flat_number }}</span>
+                            {% else %}
+                                <span class="badge badge-neutral">Not Assigned</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ r.society.name|default:"—" }}</td>
+                        <td>
+                            {% if r.user.is_active %}
+                                <span class="badge badge-success">Active</span>
+                            {% else %}
+                                <span class="badge badge-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'admin_delete_resident' r.pk %}"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Delete this resident?')">
+                               Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">👥</div>
+            <div class="empty-title">No residents yet</div>
+            <div class="empty-desc">Add residents from the button above</div>
+            <a href="{% url 'admin_add_resident' %}" class="btn btn-primary" style="margin-top:16px;">+ Add First Resident</a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

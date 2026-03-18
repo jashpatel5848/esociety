@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Verify OTP — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Verify OTP</h2>
+            <p class="page-header-subtitle">Verify visitor OTP for gate entry</p>
+        </div>
+        <a href="{% url 'guard_dashboard' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+        <!-- OTP Form -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">🔐 Enter Visitor OTP</div>
+                <div class="card-subtitle">Ask visitor for their 6-digit OTP</div>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label class="form-label">6-Digit OTP <span style="color:#EF4444;">*</span></label>
+                    <input type="text" name="otp" maxlength="6"
+                           placeholder="Enter OTP"
+                           class="form-control"
+                           style="font-size:1.75rem;letter-spacing:0.3em;font-weight:800;text-align:center;"
+                           required autofocus/>
+                    <div class="form-hint">Enter the OTP shown on resident's phone</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full btn-lg">
+                    ✅ Verify & Allow Entry
+                </button>
+            </form>
+        </div>
+
+        <!-- Result -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">📋 Verification Result</div>
+            </div>
+            {% if visitor %}
+            <div style="text-align:center;padding:24px;">
+                <div style="font-size:3rem;margin-bottom:16px;">✅</div>
+                <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:#10B981;margin-bottom:8px;">
+                    Entry Allowed!
+                </div>
+                <div style="background:var(--bg-elevated);border-radius:12px;padding:16px;text-align:left;margin-top:16px;">
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div style="display:flex;justify-content:space-between;">
+                            <span style="color:var(--text-muted);font-size:0.875rem;">Name</span>
+                            <span style="font-weight:600;color:var(--text-primary);">{{ visitor.name }}</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;">
+                            <span style="color:var(--text-muted);font-size:0.875rem;">Mobile</span>
+                            <span style="font-weight:600;color:var(--text-primary);">{{ visitor.mobile }}</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;">
+                            <span style="color:var(--text-muted);font-size:0.875rem;">Purpose</span>
+                            <span class="badge badge-neutral">{{ visitor.get_purpose_display }}</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;">
+                            <span style="color:var(--text-muted);font-size:0.875rem;">Flat</span>
+                            <span style="font-weight:600;color:var(--text-primary);">
+                                {% if visitor.resident.flat %}Flat {{ visitor.resident.flat.flat_number }}{% else %}—{% endif %}
+                            </span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;">
+                            <span style="color:var(--text-muted);font-size:0.875rem;">Resident</span>
+                            <span style="font-weight:600;color:var(--text-primary);">
+                                {{ visitor.resident.user.first_name }} {{ visitor.resident.user.last_name }}
+                            </span>
+                        </div>
+                        {% if visitor.vehicle_number %}
+                        <div style="display:flex;justify-content:space-between;">
+                            <span style="color:var(--text-muted);font-size:0.875rem;">Vehicle</span>
+                            <span style="font-weight:600;color:var(--text-primary);">{{ visitor.vehicle_number }}</span>
+                        </div>
+                        {% endif %}
+                        <div style="display:flex;justify-content:space-between;">
+                            <span style="color:var(--text-muted);font-size:0.875rem;">Entry Time</span>
+                            <span style="font-weight:600;color:var(--primary);">
+                                {{ visitor.entry_time|time:"H:i" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state" style="padding:32px;">
+                <div class="empty-icon">🔐</div>
+                <div class="empty-title">No result yet</div>
+                <div class="empty-desc">Enter OTP to verify visitor entry</div>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}  

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Add Visitor — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Pre-approve Visitor</h2>
+            <p class="page-header-subtitle">Add a visitor for gate entry approval</p>
+        </div>
+        <a href="{% url 'resident_visitor_list' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <div class="card" style="max-width:500px;">
+        <div class="card-header">
+            <div class="card-title">🧑 Visitor Details</div>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="form-group">
+                    <label class="form-label">Visitor Name <span style="color:#EF4444;">*</span></label>
+                    <input type="text" name="name" class="form-control"
+                        placeholder="Full name" required/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mobile <span style="color:#EF4444;">*</span></label>
+                    <input type="text" name="mobile" class="form-control"
+                        placeholder="10-digit number" maxlength="10" required/>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="form-group">
+                    <label class="form-label">Purpose <span style="color:#EF4444;">*</span></label>
+                    <select name="purpose" class="form-control" required>
+                        <option value="guest">Guest</option>
+                        <option value="delivery">Delivery</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Vehicle Number</label>
+                    <input type="text" name="vehicle_number" class="form-control"
+                        placeholder="e.g. GJ01AB1234"/>
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div style="background:rgba(30,111,241,0.06);border:1px solid rgba(30,111,241,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;">
+                <div style="font-size:0.8125rem;color:#1E6FF1;font-weight:600;margin-bottom:4px;">ℹ️ How it works</div>
+                <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;">
+                    After adding, visitor will get a 6-digit OTP. Guard will verify this OTP at the gate for entry.
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <a href="{% url 'resident_visitor_list' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-primary">Pre-approve Visitor</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
