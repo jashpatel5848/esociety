@@ -108,6 +108,27 @@ def adminDeleteResidentView(request, pk):
     messages.success(request, "Resident removed.")
     return redirect('admin_resident_list')
 
+@role_required(allowed_roles=["admin"])
+def adminEditResidentView(request, pk):
+    resident = get_object_or_404(ResidentProfile, pk=pk)
+    flats = Flat.objects.filter(status='vacant')
+    if request.method == "POST":
+        flat_id = request.POST.get('flat')
+        if resident.flat:
+            resident.flat.status = 'vacant'
+            resident.flat.save()
+        flat = Flat.objects.get(id=flat_id)
+        resident.flat = flat
+        resident.save()
+        flat.status = 'occupied'
+        flat.save()
+        messages.success(request, f"Flat assigned!")
+        return redirect('admin_resident_list')
+    return render(request, "society/admin/edit_resident.html", {
+        'resident': resident,
+        'flats': flats,
+    })
+
 
 # ── Flat Management ──
 @role_required(allowed_roles=["admin"])

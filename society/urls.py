@@ -10,6 +10,7 @@ urlpatterns = [
     path("admin/residents/", views.adminResidentListView, name="admin_resident_list"),
     path("admin/residents/add/", views.adminAddResidentView, name="admin_add_resident"),
     path("admin/residents/delete/<int:pk>/", views.adminDeleteResidentView, name="admin_delete_resident"),
+    path("admin/residents/edit/<int:pk>/", views.adminEditResidentView, name="admin_edit_resident"),
     path("admin/flats/", views.adminFlatListView, name="admin_flat_list"),
     path("admin/flats/add/", views.adminAddFlatView, name="admin_add_flat"),
     path("admin/complaints/", views.adminComplaintListView, name="admin_complaint_list"),
