@@ -9,30 +9,14 @@ from .models import (
     Visitor, Complaint, Facility, FacilityBooking,
     MaintenanceDue, SocietyExpense, Notice, EmergencyAlert
 )
+from .forms import (
+    ResidentAddForm, ResidentEditForm, FlatForm, ComplaintUpdateForm, NoticeForm,
+    MaintenanceDueForm, SocietyExpenseForm, FacilityForm, VisitorForm,
+    ComplaintForm, FacilityBookingForm, EmergencyAlertForm, OTPVerifyForm
+)
 from core.models import User
 import random
 import string
-
-
-# # Create your views here.
-# #@login_required(login_url="login")  #check in core.urls.py   ( login name should exist.....)
-# @role_required(allowed_roles=["admin"])    #check in core.urls.py   ( login name should exist.....)
-# def adminDashboardView(request):
-#     return render(request,"society/admin/admin_dashboard.html")
-
-# #@login_required(login_url="login")
-# @role_required(allowed_roles=["resident"])    #check in core.urls.py   ( login name should exist.....)
-# def residentDashBoard(request):
-#     return render(request,"society/resident/resident_dashboard.html")
-
-# #@login_required(login_url="login")
-# @role_required(allowed_roles=["guard"])     #check in core.urls.py   ( login name should exist.....)
-# def guardDashBoard(request):
-#     return render(request,"society/guard/guard_dashboard.html") 
-
-
-
-
 
 
 # ══════════════════════════════════════════
@@ -71,31 +55,27 @@ def adminResidentListView(request):
 
 @role_required(allowed_roles=["admin"])
 def adminAddResidentView(request):
-    flats     = Flat.objects.filter(status='vacant')
-    societies = Society.objects.all()
     if request.method == "POST":
-        email      = request.POST.get('email')
-        password   = request.POST.get('password')
-        first_name = request.POST.get('first_name')
-        last_name  = request.POST.get('last_name')
-        mobile     = request.POST.get('mobile')
-        flat_id    = request.POST.get('flat')
-        society_id = request.POST.get('society')
-        flat       = Flat.objects.get(id=flat_id)
-        society    = Society.objects.get(id=society_id)
-        user = User.objects.create_user(
-            email=email, password=password,
-            first_name=first_name, last_name=last_name,
-            mobile=mobile, role='resident'
-        )
-        ResidentProfile.objects.create(user=user, flat=flat, society=society)
-        flat.status = 'occupied'
-        flat.save()
-        messages.success(request, "Resident added successfully!")
-        return redirect('admin_resident_list')
-    return render(request, "society/admin/add_resident.html", {
-        'flats': flats, 'societies': societies
-    })
+        form = ResidentAddForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(
+                email=form.cleaned_data['email'], 
+                password=form.cleaned_data['password'],
+                first_name=form.cleaned_data['first_name'], 
+                last_name=form.cleaned_data['last_name'],
+                mobile=form.cleaned_data['mobile'], 
+                role='resident'
+            )
+            flat = form.cleaned_data['flat']
+            society = form.cleaned_data['society']
+            ResidentProfile.objects.create(user=user, flat=flat, society=society)
+            flat.status = 'occupied'
+            flat.save()
+            messages.success(request, "Resident added successfully!")
+            return redirect('admin_resident_list')
+    else:
+        form = ResidentAddForm()
+    return render(request, "society/admin/add_resident.html", {'form': form})
 
 
 @role_required(allowed_roles=["admin"])
@@ -111,22 +91,25 @@ def adminDeleteResidentView(request, pk):
 @role_required(allowed_roles=["admin"])
 def adminEditResidentView(request, pk):
     resident = get_object_or_404(ResidentProfile, pk=pk)
-    flats = Flat.objects.filter(status='vacant')
     if request.method == "POST":
-        flat_id = request.POST.get('flat')
-        if resident.flat:
-            resident.flat.status = 'vacant'
-            resident.flat.save()
-        flat = Flat.objects.get(id=flat_id)
-        resident.flat = flat
-        resident.save()
-        flat.status = 'occupied'
-        flat.save()
-        messages.success(request, f"Flat assigned!")
-        return redirect('admin_resident_list')
+        form = ResidentEditForm(request.POST, instance=resident)
+        if form.is_valid():
+            old_resident = ResidentProfile.objects.get(pk=resident.pk)
+            if old_resident.flat:
+                old_flat = old_resident.flat
+                old_flat.status = 'vacant'
+                old_flat.save()
+            new_flat = form.cleaned_data['flat']
+            form.save()
+            new_flat.status = 'occupied'
+            new_flat.save()
+            messages.success(request, f"Flat assigned!")
+            return redirect('admin_resident_list')
+    else:
+        form = ResidentEditForm(instance=resident)
     return render(request, "society/admin/edit_resident.html", {
         'resident': resident,
-        'flats': flats,
+        'form': form,
     })
 
 
@@ -139,16 +122,15 @@ def adminFlatListView(request):
 
 @role_required(allowed_roles=["admin"])
 def adminAddFlatView(request):
-    societies = Society.objects.all()
     if request.method == "POST":
-        flat_number = request.POST.get('flat_number')
-        floor       = request.POST.get('floor')
-        society_id  = request.POST.get('society')
-        society     = Society.objects.get(id=society_id)
-        Flat.objects.create(flat_number=flat_number, floor=floor, society=society)
-        messages.success(request, f"Flat {flat_number} added!")
-        return redirect('admin_flat_list')
-    return render(request, "society/admin/add_flat.html", {'societies': societies})
+        form = FlatForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Flat added!")
+            return redirect('admin_flat_list')
+    else:
+        form = FlatForm()
+    return render(request, "society/admin/add_flat.html", {'form': form})
 
 
 # ── Complaint Management ──
@@ -168,12 +150,14 @@ def adminComplaintListView(request):
 def adminComplaintUpdateView(request, pk):
     complaint = get_object_or_404(Complaint, pk=pk)
     if request.method == "POST":
-        complaint.status = request.POST.get('status')
-        complaint.remark = request.POST.get('remark')
-        complaint.save()
-        messages.success(request, "Complaint updated!")
-        return redirect('admin_complaint_list')
-    return render(request, "society/admin/complaint_detail.html", {'complaint': complaint})
+        form = ComplaintUpdateForm(request.POST, instance=complaint)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Complaint updated!")
+            return redirect('admin_complaint_list')
+    else:
+        form = ComplaintUpdateForm(instance=complaint)
+    return render(request, "society/admin/complaint_detail.html", {'complaint': complaint, 'form': form})
 
 
 # ── Notice Board ──
@@ -185,20 +169,17 @@ def adminNoticeListView(request):
 
 @role_required(allowed_roles=["admin"])
 def adminAddNoticeView(request):
-    societies = Society.objects.all()
     if request.method == "POST":
-        society_id = request.POST.get('society')
-        society    = Society.objects.get(id=society_id)
-        Notice.objects.create(
-            society     = society,
-            posted_by   = request.user,
-            title       = request.POST.get('title'),
-            content     = request.POST.get('content'),
-            notice_type = request.POST.get('notice_type'),
-        )
-        messages.success(request, "Notice posted!")
-        return redirect('admin_notice_list')
-    return render(request, "society/admin/add_notice.html", {'societies': societies})
+        form = NoticeForm(request.POST)
+        if form.is_valid():
+            notice = form.save(commit=False)
+            notice.posted_by = request.user
+            notice.save()
+            messages.success(request, "Notice posted!")
+            return redirect('admin_notice_list')
+    else:
+        form = NoticeForm()
+    return render(request, "society/admin/add_notice.html", {'form': form})
 
 
 @role_required(allowed_roles=["admin"])
@@ -230,39 +211,30 @@ def adminFinancialView(request):
 
 @role_required(allowed_roles=["admin"])
 def adminAddDueView(request):
-    residents = ResidentProfile.objects.select_related('user', 'flat').all()
     if request.method == "POST":
-        resident_id = request.POST.get('resident')
-        resident    = get_object_or_404(ResidentProfile, pk=resident_id)
-        MaintenanceDue.objects.create(
-            resident = resident,
-            month    = request.POST.get('month'),
-            amount   = request.POST.get('amount'),
-            due_date = request.POST.get('due_date'),
-        )
-        messages.success(request, "Due added!")
-        return redirect('admin_financial')
-    return render(request, "society/admin/add_due.html", {'residents': residents})
+        form = MaintenanceDueForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Due added!")
+            return redirect('admin_financial')
+    else:
+        form = MaintenanceDueForm()
+    return render(request, "society/admin/add_due.html", {'form': form})
 
 
 @role_required(allowed_roles=["admin"])
 def adminAddExpenseView(request):
-    societies = Society.objects.all()
     if request.method == "POST":
-        society_id = request.POST.get('society')
-        society    = Society.objects.get(id=society_id)
-        SocietyExpense.objects.create(
-            society     = society,
-            title       = request.POST.get('title'),
-            category    = request.POST.get('category'),
-            amount      = request.POST.get('amount'),
-            date        = request.POST.get('date'),
-            description = request.POST.get('description'),
-            added_by    = request.user,
-        )
-        messages.success(request, "Expense added!")
-        return redirect('admin_financial')
-    return render(request, "society/admin/add_expense.html", {'societies': societies})
+        form = SocietyExpenseForm(request.POST)
+        if form.is_valid():
+            expense = form.save(commit=False)
+            expense.added_by = request.user
+            expense.save()
+            messages.success(request, "Expense added!")
+            return redirect('admin_financial')
+    else:
+        form = SocietyExpenseForm()
+    return render(request, "society/admin/add_expense.html", {'form': form})
 
 
 # ── Facility Management ──
@@ -274,20 +246,34 @@ def adminFacilityListView(request):
 
 @role_required(allowed_roles=["admin"])
 def adminAddFacilityView(request):
-    societies = Society.objects.all()
     if request.method == "POST":
-        society_id = request.POST.get('society')
-        society    = Society.objects.get(id=society_id)
-        Facility.objects.create(
-            society     = society,
-            name        = request.POST.get('name'),
-            description = request.POST.get('description'),
-            capacity    = request.POST.get('capacity'),
-            price       = request.POST.get('price'),
-        )
-        messages.success(request, "Facility added!")
-        return redirect('admin_facility_list')
-    return render(request, "society/admin/add_facility.html", {'societies': societies})
+        form = FacilityForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Facility added!")
+            return redirect('admin_facility_list')
+    else:
+        form = FacilityForm()
+    return render(request, "society/admin/add_facility.html", {'form': form})
+
+
+@role_required(allowed_roles=["admin"])
+def adminFacilityBookingListView(request):
+    bookings = FacilityBooking.objects.select_related('resident__user', 'facility').order_by('-created_at')
+    return render(request, "society/admin/booking_list.html", {'bookings': bookings})
+
+
+@role_required(allowed_roles=["admin"])
+def adminUpdateBookingStatusView(request, pk, action):
+    booking = get_object_or_404(FacilityBooking, pk=pk)
+    if action == 'approve':
+        booking.status = 'confirmed'
+        messages.success(request, f"Booking for {booking.facility.name} confirmed!")
+    elif action == 'reject':
+        booking.status = 'cancelled'
+        messages.warning(request, f"Booking for {booking.facility.name} rejected.")
+    booking.save()
+    return redirect('admin_facility_booking_list')
 
 
 # ── Emergency Alerts ──
@@ -355,20 +341,19 @@ def residentVisitorListView(request):
 
 @role_required(allowed_roles=["resident"])
 def residentAddVisitorView(request):
-    profile = request.user.resident_profile
     if request.method == "POST":
-        Visitor.objects.create(
-            resident       = profile,
-            name           = request.POST.get('name'),
-            mobile         = request.POST.get('mobile'),
-            purpose        = request.POST.get('purpose'),
-            vehicle_number = request.POST.get('vehicle_number'),
-            otp            = generate_otp(),
-            status         = 'pending',
-        )
-        messages.success(request, "Visitor added! Guard will be notified.")
-        return redirect('resident_visitor_list')
-    return render(request, "society/resident/add_visitor.html")
+        form = VisitorForm(request.POST)
+        if form.is_valid():
+            visitor = form.save(commit=False)
+            visitor.resident = request.user.resident_profile
+            visitor.otp = generate_otp()
+            visitor.status = 'pending'
+            visitor.save()
+            messages.success(request, "Visitor added! Guard will be notified.")
+            return redirect('resident_visitor_list')
+    else:
+        form = VisitorForm()
+    return render(request, "society/resident/add_visitor.html", {'form': form})
 
 
 @role_required(allowed_roles=["resident"])
@@ -399,18 +384,17 @@ def residentComplaintListView(request):
 
 @role_required(allowed_roles=["resident"])
 def residentAddComplaintView(request):
-    profile = request.user.resident_profile
     if request.method == "POST":
-        Complaint.objects.create(
-            resident    = profile,
-            title       = request.POST.get('title'),
-            category    = request.POST.get('category'),
-            description = request.POST.get('description'),
-            image       = request.FILES.get('image'),
-        )
-        messages.success(request, "Complaint submitted!")
-        return redirect('resident_complaint_list')
-    return render(request, "society/resident/add_complaint.html")
+        form = ComplaintForm(request.POST, request.FILES)
+        if form.is_valid():
+            complaint = form.save(commit=False)
+            complaint.resident = request.user.resident_profile
+            complaint.save()
+            messages.success(request, "Complaint submitted!")
+            return redirect('resident_complaint_list')
+    else:
+        form = ComplaintForm()
+    return render(request, "society/resident/add_complaint.html", {'form': form})
 
 
 # ── Facility Booking ──
@@ -423,29 +407,29 @@ def residentFacilityListView(request):
 @role_required(allowed_roles=["resident"])
 def residentBookFacilityView(request, facility_id):
     facility = get_object_or_404(Facility, pk=facility_id)
-    profile  = request.user.resident_profile
     if request.method == "POST":
-        date       = request.POST.get('date')
-        start_time = request.POST.get('start_time')
-        end_time   = request.POST.get('end_time')
-        conflict   = FacilityBooking.objects.filter(
-            facility=facility, date=date,
-            start_time=start_time, status='confirmed'
-        ).exists()
-        if conflict:
-            messages.error(request, "This slot is already booked!")
-            return redirect('resident_book_facility', facility_id=facility_id)
-        FacilityBooking.objects.create(
-            resident    = profile,
-            facility    = facility,
-            date        = date,
-            start_time  = start_time,
-            end_time    = end_time,
-            amount_paid = facility.price,
-        )
-        messages.success(request, f"{facility.name} booked successfully!")
-        return redirect('resident_my_bookings')
-    return render(request, "society/resident/book_facility.html", {'facility': facility})
+        form = FacilityBookingForm(request.POST)
+        if form.is_valid():
+            date       = form.cleaned_data['date']
+            start_time = form.cleaned_data['start_time']
+            end_time   = form.cleaned_data['end_time']
+            conflict   = FacilityBooking.objects.filter(
+                facility=facility, date=date,
+                start_time=start_time, status='confirmed'
+            ).exists()
+            if conflict:
+                messages.error(request, "This slot is already booked!")
+                return redirect('resident_book_facility', facility_id=facility_id)
+            booking = form.save(commit=False)
+            booking.resident = request.user.resident_profile
+            booking.facility = facility
+            booking.amount_paid = facility.price
+            booking.save()
+            messages.success(request, f"{facility.name} booked successfully!")
+            return redirect('resident_my_bookings')
+    else:
+        form = FacilityBookingForm()
+    return render(request, "society/resident/book_facility.html", {'facility': facility, 'form': form})
 
 
 @role_required(allowed_roles=["resident"])
@@ -484,16 +468,18 @@ def residentNoticeListView(request):
 @role_required(allowed_roles=["resident"])
 def residentRaiseAlertView(request):
     if request.method == "POST":
-        society = Society.objects.first()
-        EmergencyAlert.objects.create(
-            society     = society,
-            raised_by   = request.user,
-            alert_type  = request.POST.get('alert_type'),
-            description = request.POST.get('description'),
-        )
-        messages.error(request, "🚨 Emergency alert raised!")
-        return redirect('resident_dashboard')
-    return render(request, "society/resident/raise_alert.html")
+        form = EmergencyAlertForm(request.POST)
+        if form.is_valid():
+            society = Society.objects.first()
+            alert = form.save(commit=False)
+            alert.society = society
+            alert.raised_by = request.user
+            alert.save()
+            messages.error(request, "🚨 Emergency alert raised!")
+            return redirect('resident_dashboard')
+    else:
+        form = EmergencyAlertForm()
+    return render(request, "society/resident/raise_alert.html", {'form': form})
 
 
 # ══════════════════════════════════════════
@@ -523,15 +509,19 @@ def guardVisitorListView(request):
 def guardVerifyOTPView(request):
     visitor = None
     if request.method == "POST":
-        otp = request.POST.get('otp')
-        try:
-            visitor            = Visitor.objects.get(otp=otp, status='approved')
-            visitor.entry_time = timezone.now()
-            visitor.save()
-            messages.success(request, f"✅ Entry allowed for {visitor.name}!")
-        except Visitor.DoesNotExist:
-            messages.error(request, "❌ Invalid or expired OTP!")
-    return render(request, "society/guard/verify_otp.html", {'visitor': visitor})
+        form = OTPVerifyForm(request.POST)
+        if form.is_valid():
+            otp = form.cleaned_data['otp']
+            try:
+                visitor            = Visitor.objects.get(otp=otp, status='approved')
+                visitor.entry_time = timezone.now()
+                visitor.save()
+                messages.success(request, f"✅ Entry allowed for {visitor.name}!")
+            except Visitor.DoesNotExist:
+                messages.error(request, "❌ Invalid or expired OTP!")
+    else:
+        form = OTPVerifyForm()
+    return render(request, "society/guard/verify_otp.html", {'visitor': visitor, 'form': form})
 
 
 @role_required(allowed_roles=["guard"])
@@ -547,13 +537,15 @@ def guardMarkExitView(request, pk):
 @role_required(allowed_roles=["guard"])
 def guardRaiseAlertView(request):
     if request.method == "POST":
-        society = Society.objects.first()
-        EmergencyAlert.objects.create(
-            society     = society,
-            raised_by   = request.user,
-            alert_type  = request.POST.get('alert_type'),
-            description = request.POST.get('description'),
-        )
-        messages.error(request, "🚨 Emergency alert raised!")
-        return redirect('guard_dashboard')
-    return render(request, "society/guard/raise_alert.html")
+        form = EmergencyAlertForm(request.POST)
+        if form.is_valid():
+            society = Society.objects.first()
+            alert = form.save(commit=False)
+            alert.society = society
+            alert.raised_by = request.user
+            alert.save()
+            messages.error(request, "🚨 Emergency alert raised!")
+            return redirect('guard_dashboard')
+    else:
+        form = EmergencyAlertForm()
+    return render(request, "society/guard/raise_alert.html", {'form': form})

@@ -48,6 +48,7 @@
         <li><a href="{% url 'admin_notice_list' %}" class="nav-item {% if 'notice' in request.resolver_match.url_name %}active{% endif %}">📢 Notices</a></li>
         <li><a href="{% url 'admin_financial' %}" class="nav-item {% if 'financial' in request.resolver_match.url_name %}active{% endif %}">💰 Financial</a></li>
         <li><a href="{% url 'admin_facility_list' %}" class="nav-item {% if 'facility' in request.resolver_match.url_name %}active{% endif %}">🏋️ Facilities</a></li>
+        <li><a href="{% url 'admin_facility_booking_list' %}" class="nav-item {% if 'booking' in request.resolver_match.url_name %}active{% endif %}">📅 Bookings</a></li>
         <li><a href="{% url 'admin_visitor_list' %}" class="nav-item {% if 'visitor' in request.resolver_match.url_name %}active{% endif %}">🚪 Visitors</a></li>
         <li><a href="{% url 'admin_alert_list' %}" class="nav-item {% if 'alert' in request.resolver_match.url_name %}active{% endif %}">🚨 Alerts</a></li>
     </ul>

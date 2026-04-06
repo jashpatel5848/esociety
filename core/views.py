@@ -5,6 +5,9 @@ from django.core.mail import send_mail,EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
 import os
+import random
+import string
+from django.utils import timezone
 from society.models import ResidentProfile, GuardProfile, Society
 
 # Create your views here.
@@ -18,9 +21,49 @@ def userSignupView(request):
             return redirect("guard_dashboard")
         
     if request.method == "POST":
+        if 'otp' in request.POST:
+            email = request.session.get('registration_email')
+            otp_input = request.POST.get('otp')
+            try:
+                from core.models import User
+                user = User.objects.get(email=email)
+                if user.otp == otp_input:
+                    user.status = 'active'
+                    user.otp = None
+                    user.save()
+                    
+                    # Send welcome email now
+                    html_content = render_to_string(
+                        'core/welcome_email.html',
+                        {'email': email}
+                    )
+                    email_msg = EmailMultiAlternatives(
+                        subject="Welcome to eSociety",
+                        body="Thank you for registering with e-Society.",
+                        from_email=settings.EMAIL_HOST_USER,
+                        to=[email]
+                    )
+                    email_msg.attach_alternative(html_content, "text/html")
+                    
+                    image_path = os.path.join(settings.BASE_DIR, 'static/images/welcome.png')
+                    if os.path.exists(image_path):
+                        email_msg.attach_file(image_path)
+                    
+                    email_msg.send()
+                    del request.session['registration_email']
+                    return redirect("login")
+                else:
+                    return render(request, 'core/signup.html', {'show_otp_popup': True, 'error': 'Invalid OTP', 'email': email, 'form': UserSignupForm()})
+            except Exception as e:
+                return render(request, 'core/signup.html', {'show_otp_popup': True, 'error': 'Something went wrong.', 'email': email, 'form': UserSignupForm()})
+
         form = UserSignupForm(request.POST or None)
         if form.is_valid():
             user = form.save()
+            user.status = 'inactive'
+            otp_val = str(random.randint(100000, 999999))
+            user.otp = otp_val
+            user.save()
             
 
             # Role ke hisaab se profile banao
@@ -39,32 +82,23 @@ def userSignupView(request):
            
             #email send
             email = form.cleaned_data['email']
-            #send_mail(subject="welcome to esociety",message="thank you for registering with e-society.",from_email=settings.EMAIL_HOST_USER,recipient_list=[email])
-           
             
-            # 🔹 HTML email
+            # Send OTP email
             html_content = render_to_string(
-                'core/welcome_email.html',
-                {'email': email}
+                'core/otp_email.html',
+                {'email': email, 'otp': otp_val}
             )
             email_msg = EmailMultiAlternatives(
-                subject="Welcome to eSociety",
-                body="Thank you for registering with e-Society.",
+                subject="Verify your eSociety Account",
+                body=f"Your OTP for registration is {otp_val}.",
                 from_email=settings.EMAIL_HOST_USER,
                 to=[email]
             )
             email_msg.attach_alternative(html_content, "text/html")
-
-            # 🔹 Image attachment (optional)
-            image_path = os.path.join(settings.BASE_DIR, 'static/images/welcome.png')
-            email_msg.attach_file(image_path)
-
             email_msg.send()
 
-
-
-
-            return redirect("login")
+            request.session['registration_email'] = email
+            return render(request, 'core/signup.html', {'show_otp_popup': True, 'email': email, 'form': form})
         else:  
             return render(request, 'core/signup.html', {'form': form})    
     else:

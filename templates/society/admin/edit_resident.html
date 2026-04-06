@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Edit Resident — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Edit Resident</h2>
+            <p class="page-header-subtitle">Assign or change flat for resident</p>
+        </div>
+        <a href="{% url 'admin_resident_list' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <div class="card" style="max-width:500px;">
+        <div class="card-header">
+            <div class="card-title">👤 {{ resident.user.first_name }} {{ resident.user.last_name }}</div>
+            <div class="card-subtitle">{{ resident.user.email }}</div>
+        </div>
+
+        <div style="background:var(--bg-elevated);border-radius:10px;padding:14px;margin-bottom:20px;">
+            <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);margin-bottom:8px;">CURRENT FLAT</div>
+            {% if resident.flat %}
+                <span class="badge badge-success">Flat {{ resident.flat.flat_number }} — Floor {{ resident.flat.floor }}</span>
+            {% else %}
+                <span class="badge badge-neutral">Not Assigned</span>
+            {% endif %}
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-group" style="margin-bottom:16px;">
+                <label class="form-label">Assign New Flat <span style="color:#EF4444;">*</span></label> <!-- Custom label if preferred, or just field.label -->
+                {{ field }}
+                {% if field.errors %}
+                <div style="color:#EF4444;font-size:0.8rem;margin-top:4px;">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="card-footer">
+                <a href="{% url 'admin_resident_list' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-primary">Assign Flat</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

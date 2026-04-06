@@ -19,37 +19,15 @@
         <form method="post">
             {% csrf_token %}
 
-            <div class="form-group">
-                <label class="form-label">Society <span style="color:#EF4444;">*</span></label>
-                <select name="society" class="form-control" required>
-                    <option value="">-- Select Society --</option>
-                    {% for s in societies %}
-                    <option value="{{ s.pk }}">{{ s.name }}</option>
-                    {% endfor %}
-                </select>
+            {% for field in form %}
+            <div class="form-group" style="margin-bottom:16px;">
+                <label class="form-label">{{ field.label }} {% if field.field.required %}<span style="color:#EF4444;">*</span>{% endif %}</label> <!-- Custom label if preferred, or just field.label -->
+                {{ field }}
+                {% if field.errors %}
+                <div style="color:#EF4444;font-size:0.8rem;margin-top:4px;">{{ field.errors }}</div>
+                {% endif %}
             </div>
-
-            <div class="form-group">
-                <label class="form-label">Title <span style="color:#EF4444;">*</span></label>
-                <input type="text" name="title" class="form-control"
-                    placeholder="e.g. Water Supply Disruption" required/>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Notice Type <span style="color:#EF4444;">*</span></label>
-                <select name="notice_type" class="form-control" required>
-                    <option value="general">General</option>
-                    <option value="event">Event</option>
-                    <option value="meeting">Meeting</option>
-                    <option value="emergency">Emergency</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Content <span style="color:#EF4444;">*</span></label>
-                <textarea name="content" class="form-control" rows="5"
-                    placeholder="Write notice content here..." required></textarea>
-            </div>
+            {% endfor %}
 
             <div class="card-footer">
                 <a href="{% url 'admin_notice_list' %}" class="btn btn-ghost">Cancel</a>

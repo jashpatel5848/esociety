@@ -23,15 +23,16 @@
             <form method="post">
                 {% csrf_token %}
 
-                <div class="form-group">
-                    <label class="form-label">6-Digit OTP <span style="color:#EF4444;">*</span></label>
-                    <input type="text" name="otp" maxlength="6"
-                           placeholder="Enter OTP"
-                           class="form-control"
-                           style="font-size:1.75rem;letter-spacing:0.3em;font-weight:800;text-align:center;"
-                           required autofocus/>
+                {% for field in form %}
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label class="form-label">{{ field.label }} {% if field.field.required %}<span style="color:#EF4444;">*</span>{% endif %}</label>
+                    {{ field }}
                     <div class="form-hint">Enter the OTP shown on resident's phone</div>
+                    {% if field.errors %}
+                    <div style="color:#EF4444;font-size:0.8rem;margin-top:4px;">{{ field.errors }}</div>
+                    {% endif %}
                 </div>
+                {% endfor %}
 
                 <button type="submit" class="btn btn-primary btn-full btn-lg">
                     ✅ Verify & Allow Entry

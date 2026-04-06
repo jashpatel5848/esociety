@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Facility Bookings — Admin{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header" style="margin-bottom:24px;">
+        <div>
+            <h2 class="page-header-title">Facility Bookings</h2>
+            <p class="page-header-subtitle">Manage resident facility requests and approvals</p>
+        </div>
+        <a href="{% url 'admin_facility_list' %}" class="btn btn-ghost btn-sm">← Back to Facilities</a>
+    </div>
+
+    <!-- Booking Table -->
+    <div class="card">
+        {% if bookings %}
+        <div style="overflow-x:auto;">
+            <table class="table" style="width:100%;border-collapse:collapse;text-align:left;">
+                <thead>
+                    <tr style="border-bottom:1px solid var(--border);color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;">
+                        <th style="padding:12px;">Resident</th>
+                        <th style="padding:12px;">Facility</th>
+                        <th style="padding:12px;">Date & Time</th>
+                        <th style="padding:12px;">Amount</th>
+                        <th style="padding:12px;">Status</th>
+                        <th style="padding:12px;text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr style="border-bottom:1px solid var(--border);">
+                        
+                        <td style="padding:16px 12px;">
+                            <div style="font-weight:600;color:var(--text-primary);">{{ booking.resident.user.first_name }} {{ booking.resident.user.last_name }}</div>
+                            <div style="font-size:0.8rem;color:var(--text-muted);">
+                                {% if booking.resident.flat %}Flat {{ booking.resident.flat.flat_number }}{% else %}No Flat{% endif %}
+                            </div>
+                        </td>
+
+                        <td style="padding:16px 12px;font-weight:500;">
+                            {{ booking.facility.name }}
+                        </td>
+
+                        <td style="padding:16px 12px;">
+                            <div style="color:var(--text-primary);font-size:0.9rem;">🗓️ {{ booking.date|date:"d M Y" }}</div>
+                            <div style="color:var(--text-muted);font-size:0.8rem;">⏰ {{ booking.start_time|time:"H:i" }} - {{ booking.end_time|time:"H:i" }}</div>
+                        </td>
+
+                        <td style="padding:16px 12px;font-weight:600;">
+                            ₹{{ booking.amount_paid }}
+                        </td>
+
+                        <td style="padding:16px 12px;">
+                            {% if booking.status == 'pending' %}
+                            <span class="badge badge-warning">Pending</span>
+                            {% elif booking.status == 'confirmed' %}
+                            <span class="badge badge-success">Confirmed</span>
+                            {% elif booking.status == 'cancelled' %}
+                            <span class="badge badge-danger">Cancelled</span>
+                            {% else %}
+                            <span class="badge badge-neutral">{{ booking.status }}</span>
+                            {% endif %}
+                        </td>
+
+                        <td style="padding:16px 12px;text-align:right;">
+                            {% if booking.status == 'pending' %}
+                            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                                <form method="post" action="{% url 'admin_update_booking' booking.pk 'approve' %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Approve this booking?');">
+                                        Approve
+                                    </button>
+                                </form>
+                                <form method="post" action="{% url 'admin_update_booking' booking.pk 'reject' %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject this booking?');">
+                                        Reject
+                                    </button>
+                                </form>
+                            </div>
+                            {% else %}
+                                <span style="font-size:0.8rem;color:var(--text-muted);">No actions available</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state" style="padding:48px 0;text-align:center;">
+            <div class="empty-icon" style="font-size:3rem;margin-bottom:16px;">📅</div>
+            <div class="empty-title" style="font-size:1.2rem;font-weight:600;margin-bottom:8px;">No bookings found</div>
+            <div class="empty-desc" style="color:var(--text-muted);">When residents book facilities, requests will appear here.</div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

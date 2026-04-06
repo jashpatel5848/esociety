@@ -49,6 +49,13 @@ class User(AbstractBaseUser):
         ('female','female'),
         ('other','other')
     )
+    
+    STATUS_CHOICES = (
+        ('active', 'active'),
+        ('inactive', 'inactive'),
+        ('blocked', 'blocked'),
+        ('deleted', 'deleted'),
+    )
 
     role = models.CharField(max_length=10, choices=role_choice, default='resident')
     email = models.EmailField(unique=True)
@@ -57,6 +64,10 @@ class User(AbstractBaseUser):
     last_name = models.CharField(max_length=50, blank=True, null=True )
     gender = models.CharField(max_length=10, choices=gender_choice, blank=True, null=True )
     mobile = models.CharField(max_length=10, blank=True, null=True)
+    
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='inactive')
+    otp = models.CharField(max_length=6, blank=True, null=True)
+    otp_created_at = models.DateTimeField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

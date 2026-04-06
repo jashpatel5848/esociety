@@ -1,36 +1,47 @@
 {% extends 'base.html' %}
-
-{% comment %} {% block content %}
-
-<div class="auth-wrapper">
-    <div class="auth-card">
-        <h2 class="auth-title">Create your Account</h2>
-
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-
-            <button type="submit" class="btn btn-primary full-btn">
-               create account
-            </button>
-        </form>
-    </div>
-</div>
-
-{% endblock %} {% endcomment %}
-
-
 {% block title %}Create Account — e-Society{% endblock %}
 
 {% block content %}
 
-<div style="min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px 24px;background:linear-gradient(135deg,#F0F4FF 0%,#F4F6FA 60%,#EFF6FF 100%);">
-  <div style="background:#fff;border:1px solid #E2E8F0;border-radius:24px;padding:48px 40px;width:100%;max-width:480px;box-shadow:0 12px 40px rgba(0,0,0,0.08);">
+{% if show_otp_popup %}
+<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:9999;">
+  <div style="background:#fff;border-radius:24px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 12px 40px rgba(0,0,0,0.08); text-align:center;">
 
     <!-- Logo -->
     <div style="text-align:center;margin-bottom:32px;">
-      <div style="width:52px;height:52px;background:#1E6FF1;border-radius:14px;display:grid;place-items:center;margin:0 auto 16px;font-family:'Outfit',sans-serif;font-weight:900;font-size:1.25rem;color:#fff;box-shadow:0 0 20px rgba(30,111,241,0.3);">eS</div>
-      <h2 style="font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;color:#0F172A;margin-bottom:6px;">Create Account</h2>
+      <div
+        style="width:52px;height:52px;background:#1E6FF1;border-radius:14px;display:grid;place-items:center;margin:0 auto 16px;font-family:'Outfit',sans-serif;font-weight:900;font-size:1.25rem;color:#fff;box-shadow:0 0 20px rgba(30,111,241,0.3);">
+        eS</div>
+      <h2 style="font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;color:#0F172A;margin-bottom:6px;">
+        Verify OTP</h2>
+      <p style="font-size:0.9rem;color:#94A3B8;">Enter the code sent to your email</p>
+    </div>
+
+    <form method="post" action="{% url 'signup' %}">
+      {% csrf_token %}
+      <input type="text" name="otp" placeholder="Enter 6-digit OTP" required
+        style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:1rem;padding:12px;margin-bottom:20px;text-align:center;letter-spacing:4px;outline:none;" />
+      <button type="submit"
+        style="width:100%;background:#1E6FF1;color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Outfit',sans-serif;font-weight:700;cursor:pointer;">
+        Verify & Create
+      </button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<div
+  style="min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px 24px;background:linear-gradient(135deg,#F0F4FF 0%,#F4F6FA 60%,#EFF6FF 100%);">
+  <div
+    style="background:#fff;border:1px solid #E2E8F0;border-radius:24px;padding:48px 40px;width:100%;max-width:480px;box-shadow:0 12px 40px rgba(0,0,0,0.08);">
+
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:32px;">
+      <div
+        style="width:52px;height:52px;background:#1E6FF1;border-radius:14px;display:grid;place-items:center;margin:0 auto 16px;font-family:'Outfit',sans-serif;font-weight:900;font-size:1.25rem;color:#fff;box-shadow:0 0 20px rgba(30,111,241,0.3);">
+        eS</div>
+      <h2 style="font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;color:#0F172A;margin-bottom:6px;">
+        Create Account</h2>
       <p style="font-size:0.9rem;color:#94A3B8;">Join your society's digital platform</p>
     </div>
 
@@ -40,28 +51,31 @@
       <!-- First + Last Name -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
         <div>
-          <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">First Name <span style="color:#EF4444;">*</span></label>
+          <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">First Name
+            <span style="color:#EF4444;">*</span></label>
           <input type="text" name="first_name" placeholder="jaivik" required
             style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:10px 12px;outline:none;font-family:'DM Sans',sans-serif;"
             onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)'"
-            onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"/>
+            onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />
         </div>
         <div>
-          <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">Last Name <span style="color:#EF4444;">*</span></label>
+          <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">Last Name
+            <span style="color:#EF4444;">*</span></label>
           <input type="text" name="last_name" placeholder="antiya" required
             style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:10px 12px;outline:none;font-family:'DM Sans',sans-serif;"
             onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)'"
-            onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"/>
+            onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />
         </div>
       </div>
 
       <!-- Email -->
       <div style="margin-bottom:18px;">
-        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">Email Address <span style="color:#EF4444;">*</span></label>
+        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">Email Address
+          <span style="color:#EF4444;">*</span></label>
         <input type="email" name="email" placeholder="your@email.com" required
           style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:10px 12px;outline:none;font-family:'DM Sans',sans-serif;"
           onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)'"
-          onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"/>
+          onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />
       </div>
 
       <!-- Gender + Role -->
@@ -69,21 +83,22 @@
 
         <!-- Gender Radio -->
         <div>
-          <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:8px;">Gender</label>
+          <label
+            style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:8px;">Gender</label>
           <div style="display:flex;flex-direction:column;gap:8px;">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.875rem;color:#475569;">
               <input type="radio" name="gender" value="male"
-                style="accent-color:#1E6FF1;width:16px;height:16px;cursor:pointer;"/>
+                style="accent-color:#1E6FF1;width:16px;height:16px;cursor:pointer;" />
               Male
             </label>
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.875rem;color:#475569;">
               <input type="radio" name="gender" value="female"
-                style="accent-color:#1E6FF1;width:16px;height:16px;cursor:pointer;"/>
+                style="accent-color:#1E6FF1;width:16px;height:16px;cursor:pointer;" />
               Female
             </label>
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.875rem;color:#475569;">
               <input type="radio" name="gender" value="other"
-                style="accent-color:#1E6FF1;width:16px;height:16px;cursor:pointer;"/>
+                style="accent-color:#1E6FF1;width:16px;height:16px;cursor:pointer;" />
               Other
             </label>
           </div>
@@ -91,11 +106,11 @@
 
         <!-- Role -->
         <div>
-          <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:8px;">Role <span style="color:#EF4444;">*</span></label>
+          <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:8px;">Role <span
+              style="color:#EF4444;">*</span></label>
           <select name="role"
             style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:10px 12px;outline:none;font-family:'DM Sans',sans-serif;cursor:pointer;"
-            onfocus="this.style.borderColor='#1E6FF1'"
-            onblur="this.style.borderColor='#E2E8F0'">
+            onfocus="this.style.borderColor='#1E6FF1'" onblur="this.style.borderColor='#E2E8F0'">
             <option value="resident">Resident</option>
             <option value="guard">Guard</option>
           </select>
@@ -105,29 +120,32 @@
 
       <!-- Password -->
       <div style="margin-bottom:18px;">
-        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">Password <span style="color:#EF4444;">*</span></label>
+        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">Password <span
+            style="color:#EF4444;">*</span></label>
         <input type="password" name="password1" placeholder="Min 8 characters" required
           style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:10px 12px;outline:none;font-family:'DM Sans',sans-serif;"
           onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)'"
-          onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"/>
+          onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />
       </div>
 
       <!-- Confirm Password -->
       <div style="margin-bottom:20px;">
-        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">Confirm Password <span style="color:#EF4444;">*</span></label>
+        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">Confirm
+          Password <span style="color:#EF4444;">*</span></label>
         <input type="password" name="password2" placeholder="Repeat password" required
           style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:10px 12px;outline:none;font-family:'DM Sans',sans-serif;"
           onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)'"
-          onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"/>
+          onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />
       </div>
 
       <!-- Form Errors -->
       {% if form.errors %}
-      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;">
+      <div
+        style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;">
         {% for field in form %}
-          {% for error in field.errors %}
-          <div style="font-size:0.8125rem;color:#EF4444;margin-bottom:4px;">❌ {{ error }}</div>
-          {% endfor %}
+        {% for error in field.errors %}
+        <div style="font-size:0.8125rem;color:#EF4444;margin-bottom:4px;">❌ {{ error }}</div>
+        {% endfor %}
         {% endfor %}
         {% for error in form.non_field_errors %}
         <div style="font-size:0.8125rem;color:#EF4444;margin-bottom:4px;">❌ {{ error }}</div>

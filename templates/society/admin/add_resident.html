@@ -20,53 +20,15 @@
         <form method="post">
             {% csrf_token %}
 
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div class="form-group">
-                    <label class="form-label">First Name <span style="color:#EF4444;">*</span></label>
-                    <input type="text" name="first_name" class="form-control" placeholder="Jash" required/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Last Name <span style="color:#EF4444;">*</span></label>
-                    <input type="text" name="last_name" class="form-control" placeholder="Patel" required/>
-                </div>
+            {% for field in form %}
+            <div class="form-group" style="margin-bottom:16px;">
+                <label class="form-label">{{ field.label }} {% if field.field.required %}<span style="color:#EF4444;">*</span>{% endif %}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color:#EF4444;font-size:0.8rem;margin-top:4px;">{{ field.errors }}</div>
+                {% endif %}
             </div>
-
-            <div class="form-group">
-                <label class="form-label">Email <span style="color:#EF4444;">*</span></label>
-                <input type="email" name="email" class="form-control" placeholder="resident@email.com" required/>
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div class="form-group">
-                    <label class="form-label">Mobile</label>
-                    <input type="text" name="mobile" class="form-control" placeholder="9876543210" maxlength="10"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Password <span style="color:#EF4444;">*</span></label>
-                    <input type="password" name="password" class="form-control" placeholder="Min 8 characters" required/>
-                </div>
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div class="form-group">
-                    <label class="form-label">Society <span style="color:#EF4444;">*</span></label>
-                    <select name="society" class="form-control" required>
-                        <option value="">-- Select Society --</option>
-                        {% for s in societies %}
-                        <option value="{{ s.pk }}">{{ s.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Flat <span style="color:#EF4444;">*</span></label>
-                    <select name="flat" class="form-control" required>
-                        <option value="">-- Select Flat --</option>
-                        {% for f in flats %}
-                        <option value="{{ f.pk }}">Flat {{ f.flat_number }} (Floor {{ f.floor }})</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+            {% endfor %}
 
             <div class="card-footer">
                 <a href="{% url 'admin_resident_list' %}" class="btn btn-ghost">Cancel</a>
