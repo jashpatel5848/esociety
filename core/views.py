@@ -145,7 +145,7 @@ def userLoginView(request):
     
 def userLogoutView(request):
     logout(request)             #user ka sessio clear
-    return redirect('login')
+    return redirect('home')
 
 
 def userHomepageView(request):

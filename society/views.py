@@ -18,6 +18,44 @@ from core.models import User
 import random
 import string
 
+import razorpay
+from django.conf import settings
+from django.http import JsonResponse
+
+
+
+# ══════════════════════════════════════════
+# payment
+# ══════════════════════════════════════════
+
+def booking(request):
+    return render(request, "society/admin/booking.html")
+    
+def create_razorpay_order(request):
+    #razorpay auth
+    client = razorpay.Client(auth=("rzp_test_Sabuhwd8z6gOZE", "Almc4BKCwgbIqx4TulnDtkfe"))
+    payment = client.order.create({
+        "amount": 10000,  #100rs
+        "currency": "INR",
+        "payment_capture": "1"
+    })
+    return JsonResponse(payment)
+
+def verify_razorpay_payment(request):
+    client = razorpay.Client(auth=("rzp_test_Sabuhwd8z6gOZE", "Almc4BKCwgbIqx4TulnDtkfe"))
+    params = {
+        "razorpay_order_id": request.POST.get("razorpay_order_id"),
+        "razorpay_payment_id": request.POST.get("razorpay_payment_id"),
+        "razorpay_signature": request.POST.get("razorpay_signature"),
+    }
+    try:
+        client.utility.verify_payment_signature(params)
+        return JsonResponse({"status": "success"})
+        #payment --> 3 data store...
+    except:
+        return JsonResponse({"status": "error"})
+    
+    
 
 # ══════════════════════════════════════════
 # HELPER

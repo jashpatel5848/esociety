@@ -49,5 +49,10 @@ urlpatterns = [
     path("guard/visitors/verify-otp/", views.guardVerifyOTPView, name="guard_verify_otp"),
     path("guard/visitors/exit/<int:pk>/", views.guardMarkExitView, name="guard_mark_exit"),
     path("guard/alert/raise/", views.guardRaiseAlertView, name="guard_raise_alert"),
+
+    # ── PAYMENT ──
+    path("create-order/", views.create_razorpay_order, name="create_order"),
+    path("booking/", views.booking, name="booking"),
+    path("verify-payment/", views.verify_razorpay_payment, name="verify_payment"),
     
 ]
