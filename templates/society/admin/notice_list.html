@@ -41,7 +41,7 @@
                     </div>
                     <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:8px;">{{ n.content }}</p>
                     <small style="color:var(--text-muted);">
-                        Posted by {{ n.posted_by.first_name|default:n.posted_by.email }} — {{ n.created_at|date:"d M Y, H:i" }}
+                        Posted by {% if n.posted_by %}{{ n.posted_by.first_name|default:n.posted_by.email }}{% else %}Society Admin{% endif %} — {{ n.created_at|date:"d M Y, H:i" }}
                     </small>
                 </div>
                 <a href="{% url 'admin_delete_notice' n.pk %}"

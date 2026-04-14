@@ -39,25 +39,42 @@
     <div class="navbar-logo">
         <a href="{% url 'guard_dashboard' %}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
             <div class="navbar-logo-icon" style="background:var(--accent-yellow);color:#0D1117;">eS</div>
-            <span style="font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--text-primary);">
+            <span style="font-family:var(--font-display);font-weight:800;font-size:1.3rem;color:var(--text-primary);">
                 e-<span style="color:var(--accent-yellow);">Society</span>
-                <small style="display:block;font-size:0.65rem;font-weight:500;color:var(--text-muted);margin-top:-2px;">Guard Portal</small>
+                <small
+                    style="display:block;font-size:0.85rem;font-weight:500;color:var(--text-muted);margin-top:-2px;">Guard
+                    Portal</small>
             </span>
         </a>
     </div>
 
     <ul class="nav-links">
-        <li><a href="{% url 'guard_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'guard_dashboard' %}active{% endif %}">🏠 Dashboard</a></li>
-        <li><a href="{% url 'guard_visitor_list' %}" class="nav-item {% if 'visitor_list' in request.resolver_match.url_name %}active{% endif %}">📋 All Visitors</a></li>
-        <li><a href="{% url 'guard_verify_otp' %}" class="nav-item {% if 'verify_otp' in request.resolver_match.url_name %}active{% endif %}">🔐 Verify OTP</a></li>
-        <li><a href="{% url 'guard_raise_alert' %}" class="nav-item {% if 'alert' in request.resolver_match.url_name %}active{% endif %}" style="color:var(--accent);">🚨 Emergency</a></li>
+        <li><a href="{% url 'guard_dashboard' %}"
+                class="nav-item {% if request.resolver_match.url_name == 'guard_dashboard' %}active{% endif %}">🏠
+                Dashboard</a></li>
+        <li><a href="{% url 'guard_visitor_list' %}"
+                class="nav-item {% if 'visitor_list' in request.resolver_match.url_name %}active{% endif %}">📋 All
+                Visitors</a></li>
+        <li><a href="{% url 'guard_verify_otp' %}"
+                class="nav-item {% if 'verify_otp' in request.resolver_match.url_name %}active{% endif %}">🔐 Verify
+                OTP</a></li>
+        <li><a href="{% url 'guard_raise_alert' %}"
+                class="nav-item {% if 'alert' in request.resolver_match.url_name %}active{% endif %}"
+                style="color:var(--accent);">🚨 Emergency</a></li>
     </ul>
 
-    <div class="nav-right">
-        <span class="user-name">🛡️ {{ request.user.first_name|default:request.user.email }}</span>
+    <div class="nav-right" style="display: flex; align-items: center; gap: 20px;">
+        <a href="{% url 'profile' %}" class="user-name" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text-primary); font-weight: 600; font-size: 0.95rem;">
+            {% if request.user.profile_pic %}
+                <img src="{{ request.user.profile_pic.url }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-yellow);">
+            {% else %}
+                🛡️
+            {% endif %}
+            {{ request.user.first_name|default:request.user.email }}
+        </a>
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-ghost btn-sm">Logout</button>
+            <button type="button" class="btn btn-ghost" onclick="showLogoutModal(this.form)">Logout</button>
         </form>
     </div>
 </nav>

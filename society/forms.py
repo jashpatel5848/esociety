@@ -100,6 +100,22 @@ class VisitorForm(forms.ModelForm):
             'vehicle_number': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+class GuardVisitorForm(forms.ModelForm):
+    resident = forms.ModelChoiceField(
+        queryset=ResidentProfile.objects.select_related('user', 'flat').all(),
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label="Select Flat / Resident"
+    )
+    class Meta:
+        model = Visitor
+        fields = ['resident', 'name', 'mobile', 'purpose', 'vehicle_number']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'mobile': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '10'}),
+            'purpose': forms.Select(attrs={'class': 'form-select'}),
+            'vehicle_number': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
 class ComplaintForm(forms.ModelForm):
     class Meta:
         model = Complaint

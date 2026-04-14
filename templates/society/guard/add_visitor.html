@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Register Visitor — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">New Visitor Entry</h2>
+            <p class="page-header-subtitle">Register a visitor arriving at the gate</p>
+        </div>
+        <a href="{% url 'guard_dashboard' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <div class="card" style="max-width:550px;">
+        <div class="card-header">
+            <div class="card-title">🛡️ Gate Entry Details</div>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-group" style="margin-bottom:16px;">
+                <label class="form-label">{{ field.label }} {% if field.field.required %}<span
+                        style="color:#EF4444;">*</span>{% endif %}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color:#EF4444;font-size:0.8rem;margin-top:4px;">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <!-- Info Box -->
+            <div
+                style="background:rgba(30,111,241,0.06);border:1px solid rgba(30,111,241,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;">
+                <div style="font-size:0.8125rem;color:#1E6FF1;font-weight:600;margin-bottom:4px;">ℹ️ What happens next?
+                </div>
+                <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;">
+                    The resident will receive a notification to Approve or Deny the entry. Once approved, you can
+                    confirm their entry from your dashboard.
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <a href="{% url 'guard_dashboard' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-primary">Request Entry Approval</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

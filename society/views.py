@@ -12,7 +12,8 @@ from .models import (
 from .forms import (
     ResidentAddForm, ResidentEditForm, FlatForm, ComplaintUpdateForm, NoticeForm,
     MaintenanceDueForm, SocietyExpenseForm, FacilityForm, VisitorForm,
-    ComplaintForm, FacilityBookingForm, EmergencyAlertForm, OTPVerifyForm
+    ComplaintForm, FacilityBookingForm, EmergencyAlertForm, OTPVerifyForm,
+    GuardVisitorForm
 )
 from core.models import User
 import random
@@ -357,14 +358,24 @@ def residentDashBoard(request):
             'pending_visitors': [],
             'active_alerts'   : [],
         })
+    all_pending = Visitor.objects.filter(resident=profile, status='pending').order_by('-created_at')
+    
+    # Visitors added by Guard (Need resident approval)
+    approval_requests = [v for v in all_pending if v.approved_by == 'guard']
+    
+    # Visitors pre-approved by Resident (Waiting at gate)
+    expected_visitors = [v for v in all_pending if v.approved_by == 'resident']
+
     context = {
         'profile'          : profile,
         'my_complaints'    : Complaint.objects.filter(resident=profile).order_by('-created_at')[:5],
         'my_bookings'      : FacilityBooking.objects.filter(resident=profile).order_by('-created_at')[:5],
         'my_dues'          : MaintenanceDue.objects.filter(resident=profile, status='unpaid'),
         'recent_notices'   : Notice.objects.filter(is_active=True).order_by('-created_at')[:5],
-        'pending_visitors' : Visitor.objects.filter(resident=profile, status='pending').order_by('-created_at'),
+        'approval_requests': approval_requests,
+        'expected_visitors': expected_visitors,
         'active_alerts'    : EmergencyAlert.objects.filter(is_resolved=False).order_by('-created_at')[:3],
+        'recent_entries'   : Visitor.objects.filter(resident=profile, entry_time__isnull=False).order_by('-entry_time')[:5],
     }
     return render(request, "society/resident/resident_dashboard.html", context)
 
@@ -385,7 +396,8 @@ def residentAddVisitorView(request):
             visitor = form.save(commit=False)
             visitor.resident = request.user.resident_profile
             visitor.otp = generate_otp()
-            visitor.status = 'pending'
+            visitor.status = 'pending' # Waiting for gate entry
+            visitor.approved_by = 'resident' # Pre-authorized by resident
             visitor.save()
             messages.success(request, "Visitor added! Guard will be notified.")
             return redirect('resident_visitor_list')
@@ -398,6 +410,7 @@ def residentAddVisitorView(request):
 def residentApproveVisitorView(request, pk):
     visitor        = get_object_or_404(Visitor, pk=pk, resident=request.user.resident_profile)
     visitor.status = 'approved'
+    visitor.approved_by = 'resident'
     visitor.save()
     messages.success(request, f"{visitor.name} approved!")
     return redirect('resident_visitor_list')
@@ -527,8 +540,8 @@ def residentRaiseAlertView(request):
 @role_required(allowed_roles=["guard"])
 def guardDashBoard(request):
     context = {
-        'pending_visitors' : Visitor.objects.filter(status='pending').order_by('-created_at'),
-        'approved_visitors': Visitor.objects.filter(status='approved').order_by('-created_at')[:10],
+        'pending_visitors' : Visitor.objects.filter(status__in=['pending', 'approved'], entry_time__isnull=True).order_by('-created_at'),
+        'approved_visitors': Visitor.objects.filter(status='approved', entry_time__isnull=False).order_by('-created_at')[:10],
         'active_alerts'    : EmergencyAlert.objects.filter(is_resolved=False).order_by('-created_at'),
         'todays_visitors'  : Visitor.objects.filter(
             entry_time__date=timezone.now().date()
@@ -544,17 +557,62 @@ def guardVisitorListView(request):
 
 
 @role_required(allowed_roles=["guard"])
+def guardApproveEntryView(request, pk):
+    visitor = get_object_or_404(Visitor, pk=pk)
+    visitor.status = 'approved'
+    visitor.approved_by = 'guard'
+    visitor.entry_time = timezone.now()
+    visitor.save()
+    messages.success(request, f"Entry authorized by Guard for {visitor.name}.")
+    return redirect('guard_dashboard')
+
+
+@role_required(allowed_roles=["guard"])
+def guardAddVisitorView(request):
+    if request.method == "POST":
+        form = GuardVisitorForm(request.POST)
+        if form.is_valid():
+            visitor = form.save(commit=False)
+            # No OTP needed for gate entry initiated by guard, but we'll set one for consistency
+            visitor.otp = generate_otp()
+            visitor.status = 'pending' # Requires resident approval
+            visitor.save()
+            messages.success(request, f"Entry request sent for {visitor.name}. Awaiting resident approval.")
+            return redirect('guard_dashboard')
+    else:
+        form = GuardVisitorForm()
+    return render(request, "society/guard/add_visitor.html", {'form': form})
+
+
+@role_required(allowed_roles=["guard"])
 def guardVerifyOTPView(request):
     visitor = None
+    # Support quick-allow from dashboard
+    otp_from_get = request.GET.get('otp')
+    if otp_from_get:
+        try:
+            # We look for pending visitors pre-authorized by residents
+            visitor = Visitor.objects.get(otp=otp_from_get, status='pending', approved_by='resident')
+            visitor.entry_time = timezone.now()
+            visitor.status = 'approved' # Entry granted
+            visitor.save()
+            messages.success(request, f"✅ Entry allowed for {visitor.name}!")
+            return redirect('guard_dashboard')
+        except Visitor.DoesNotExist:
+            messages.error(request, "❌ Invalid or already entered!")
+            return redirect('guard_dashboard')
+
     if request.method == "POST":
         form = OTPVerifyForm(request.POST)
         if form.is_valid():
             otp = form.cleaned_data['otp']
             try:
-                visitor            = Visitor.objects.get(otp=otp, status='approved')
+                visitor            = Visitor.objects.get(otp=otp, status='pending', approved_by='resident')
                 visitor.entry_time = timezone.now()
+                visitor.status = 'approved' # Entry granted
                 visitor.save()
                 messages.success(request, f"✅ Entry allowed for {visitor.name}!")
+                return redirect('guard_dashboard')
             except Visitor.DoesNotExist:
                 messages.error(request, "❌ Invalid or expired OTP!")
     else:

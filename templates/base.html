@@ -1,16 +1,20 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}e-Society{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
 </head>
+
 <body>
 
-    {% comment "" %}  // check role for navbar...  {% endcomment %}
+    {% comment "" %} // check role for navbar... {% endcomment %}
     {% if request.user.is_authenticated %}
         {% if request.user.role == 'admin' %}
             {% include 'society/admin/admin_navbar.html' %}
@@ -19,13 +23,27 @@
         {% elif request.user.role == 'guard' %}
             {% include 'society/guard/guard_navbar.html' %}
         {% endif %}
+
+        <!-- Mobile Portal Header -->
+        <div class="portal-mobile-header">
+            <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+                <div style="width:32px;height:32px;border-radius:6px;background:var(--primary);display:grid;place-items:center;font-size:0.85rem;color:#fff;font-weight:900;">eS</div>
+                <span style="font-family:var(--font-display);font-weight:800;font-size:1.15rem;color:var(--text-primary);">e-<span style="color:var(--primary);">Society</span></span>
+            </a>
+            <button class="portal-mobile-toggle" id="sidebarToggle">☰</button>
+        </div>
+
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    {% else %}
+        {% include 'core/home_navbar.html' %}
     {% endif %}
 
     <div class="main-container">
         {% if messages %}
-        <div class="messages-wrapper">
+        <div class="toast-container">
             {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible">
+            <div class="toast alert-{{ message.tags }}" id="toast-{{ forloop.counter }}">
                 <span class="alert-icon">
                     {% if message.tags == 'success' %}✅
                     {% elif message.tags == 'error' %}❌
@@ -33,7 +51,8 @@
                     {% else %}ℹ️{% endif %}
                 </span>
                 <div class="alert-content">{{ message }}</div>
-                <button class="alert-close" onclick="this.parentElement.remove()">✕</button>
+                <button class="alert-close" onclick="dismissToast('toast-{{ forloop.counter }}')"
+                    style="background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 1.1rem; margin-left: 8px;">✕</button>
             </div>
             {% endfor %}
         </div>
@@ -41,10 +60,106 @@
 
         {% block content %}
         {% endblock %}
+
+        {% if request.user.is_authenticated %}
+        <footer class="app-footer">
+            <div class="footer-container">
+                <div class="footer-tag">
+                    © 2026, made with ❤️ for <span class="footer-brand">e-Society</span>
+                </div>
+            </div>
+        </footer>
+        {% else %}
+            {% include 'core/home_footer.html' %}
+        {% endif %}
     </div>
 
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-overlay">
+        <div class="confirm-modal">
+            <div class="confirm-modal-icon">🚪</div>
+            <h3 class="confirm-modal-title">Confirm Logout</h3>
+            <p class="confirm-modal-text">Are you sure you want to logout? <br> You'll need to login again to access
+                your account.</p>
+            <div class="confirm-modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="closeLogoutModal()">Cancel</button>
+                <button type="button" class="btn-modal-confirm" onclick="executeLogout()">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar Toggle Logic
+        const sidebar = document.querySelector('.portal-sidebar');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        if (toggleBtn && sidebar) {
+            function toggleSidebar() {
+                sidebar.classList.toggle('active');
+                document.body.classList.toggle('sidebar-open');
+            }
+
+            toggleBtn.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Close sidebar when clicking a nav item on mobile
+            const navLinks = sidebar.querySelectorAll('.nav-item');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 1024) {
+                        toggleSidebar();
+                    }
+                });
+            });
+        }
+
+        let formToSubmit = null;
+
+        function showLogoutModal(form) {
+            formToSubmit = form;
+            document.getElementById('logoutModal').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Stop scrolling
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').classList.remove('active');
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
+            formToSubmit = null;
+        }
+
+        function executeLogout() {
+            if (formToSubmit) {
+                formToSubmit.submit();
+            }
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLogoutModal();
+        });
+
+        function dismissToast(id) {
+            const toast = document.getElementById(id);
+            if (toast) {
+                toast.classList.add('fade-out');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }
+        }
+
+        // Auto-dismiss toasts after 3 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    dismissToast(toast.id);
+                }, 3000);
+            });
+        });
+    </script>
+
 </body>
+
 </html>
-
-
-

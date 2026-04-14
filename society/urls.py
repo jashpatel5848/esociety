@@ -47,6 +47,8 @@ urlpatterns = [
     # ── GUARD ──
     path("guard/visitors/", views.guardVisitorListView, name="guard_visitor_list"),
     path("guard/visitors/verify-otp/", views.guardVerifyOTPView, name="guard_verify_otp"),
+    path("guard/visitors/approve/<int:pk>/", views.guardApproveEntryView, name="guard_approve_entry"),
+    path("guard/visitors/add/", views.guardAddVisitorView, name="guard_add_visitor"),
     path("guard/visitors/exit/<int:pk>/", views.guardMarkExitView, name="guard_mark_exit"),
     path("guard/alert/raise/", views.guardRaiseAlertView, name="guard_raise_alert"),
 

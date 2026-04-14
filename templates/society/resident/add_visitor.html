@@ -2,47 +2,53 @@
 {% block title %}Add Visitor — e-Society{% endblock %}
 
 {% block content %}
-<div class="page-body">
+<div class="split-card-container">
+    <div class="split-card">
+        <!-- Close Button (Replaces Back) -->
+        <a href="{% url 'resident_visitor_list' %}" class="split-card-close" title="Cancel">✕</a>
 
-    <div class="page-header">
-        <div>
-            <h2 class="page-header-title">Pre-approve Visitor</h2>
-            <p class="page-header-subtitle">Add a visitor for gate entry approval</p>
-        </div>
-        <a href="{% url 'resident_visitor_list' %}" class="btn btn-ghost btn-sm">← Back</a>
-    </div>
-
-    <div class="card" style="max-width:500px;">
-        <div class="card-header">
-            <div class="card-title">🧑 Visitor Details</div>
-        </div>
-        <form method="post">
-            {% csrf_token %}
-
-            {% for field in form %}
-            <div class="form-group" style="margin-bottom:16px;">
-                <label class="form-label">{{ field.label }} {% if field.field.required %}<span style="color:#EF4444;">*</span>{% endif %}</label> <!-- Custom label if preferred, or just field.label -->
-                {{ field }}
-                {% if field.errors %}
-                <div style="color:#EF4444;font-size:0.8rem;margin-top:4px;">{{ field.errors }}</div>
-                {% endif %}
-            </div>
-            {% endfor %}
-
-            <!-- Info Box -->
-            <div style="background:rgba(30,111,241,0.06);border:1px solid rgba(30,111,241,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;">
-                <div style="font-size:0.8125rem;color:#1E6FF1;font-weight:600;margin-bottom:4px;">ℹ️ How it works</div>
-                <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;">
-                    After adding, visitor will get a 6-digit OTP. Guard will verify this OTP at the gate for entry.
+        <!-- Visual Side (Left) -->
+        <div class="split-card-visual">
+            <div class="visual-icon">🛡️</div>
+            <h2 class="visual-title">Pre-approve <br>Your Visitors</h2>
+            <p class="visual-text">
+                Generate a secure OTP for your guests to ensure a smooth and verified entry at the society gate.
+            </p>
+            
+            <div style="margin-top: 40px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-size: 0.8rem; color: #1E6FF1; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Quick Tip</div>
+                <p style="font-size: 0.85rem; color: #94A3B8; line-height: 1.5;">
+                    Visitors will receive an SMS with a 6-digit code to show the guard.
                 </p>
             </div>
+        </div>
 
-            <div class="card-footer">
-                <a href="{% url 'resident_visitor_list' %}" class="btn btn-ghost">Cancel</a>
-                <button type="submit" class="btn btn-primary">Pre-approve Visitor</button>
+        <!-- Form Side (Right) -->
+        <div class="split-card-content">
+            <div class="split-card-header">
+                <h1 class="split-card-title">Visitor Details</h1>
+                <p class="split-card-subtitle">Enter your guest's basic information below.</p>
             </div>
-        </form>
-    </div>
 
+            <form method="post">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="form-group" style="margin-bottom:20px;">
+                    <label class="form-label" style="font-weight: 700;">{{ field.label }} {% if field.field.required %}<span style="color:#EF4444;">*</span>{% endif %}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <div style="color:#EF4444;font-size:0.8rem;margin-top:4px;">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div style="margin-top: 32px; display: flex; gap: 12px;">
+                    <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">Pre-approve Visitor</button>
+                    <a href="{% url 'resident_visitor_list' %}" class="btn btn-ghost btn-lg">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-{% endblock %}
+{% endblock %}

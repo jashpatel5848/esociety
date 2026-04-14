@@ -45,7 +45,7 @@
                 </div>
                 <p style="font-size:0.9rem;color:var(--text-secondary);line-height:1.7;">{{ n.content }}</p>
                 <small style="color:var(--text-muted);margin-top:8px;display:block;">
-                    Posted by {{ n.posted_by.first_name|default:n.posted_by.email }}
+                    Posted by {% if n.posted_by %}{{ n.posted_by.first_name|default:n.posted_by.email }}{% else %}Society Admin{% endif %}
                 </small>
             </div>
             {% endfor %}

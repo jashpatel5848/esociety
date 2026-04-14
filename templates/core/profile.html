@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}My Profile — e-Society{% endblock %}
+
+{% block content %}
+<div class="page-body">
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">My Profile</h2>
+            <p class="page-header-subtitle">Manage your personal information and security</p>
+        </div>
+    </div>
+
+    <div class="grid grid-auto" style="align-items: flex-start; display: grid; grid-template-columns: 1fr 2fr; gap: 24px;">
+        <!-- Profile Card -->
+        <div class="card card-glow" style="background: var(--bg-surface); border-radius: var(--radius-lg); padding: var(--space-lg); border: 1px solid var(--border);">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 16px;">
+                    {% if request.user.profile_pic %}
+                        <img src="{{ request.user.profile_pic.url }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid var(--primary-glow);">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; background: var(--bg-elevated); border-radius: 50%; display: grid; place-items: center; font-size: 3rem; color: var(--text-muted); border: 2px dashed var(--border);">
+                            👤
+                        </div>
+                    {% endif %}
+                </div>
+                <h3 style="margin-bottom: 4px; font-family: var(--font-display); font-weight: 700;">{{ request.user.first_name }} {{ request.user.last_name }}</h3>
+                <span style="font-size: 0.8rem; background: var(--bg-hover); color: var(--primary); padding: 4px 12px; border-radius: 20px; font-weight: 600; text-transform: uppercase;">{{ request.user.role }}</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--text-muted);">Email</span>
+                    <span style="color: var(--text-primary); font-weight: 500;">{{ request.user.email }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--text-muted);">Joined</span>
+                    <span style="color: var(--text-primary); font-weight: 500;">{{ request.user.created_at|date:"F Y" }}</span>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 24px 0;">
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <a href="{% url 'change_password' %}" class="btn btn-ghost btn-full" style="justify-content: center; width: 100%; display: flex; align-items: center; gap: 8px; padding: 12px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg-elevated); color: var(--text-primary);">
+                    🔒 Change Password
+                </a>
+            </div>
+        </div>
+
+        <!-- Edit Profile Card -->
+        <div class="card" style="background: var(--bg-surface); border-radius: var(--radius-lg); padding: var(--space-lg); border: 1px solid var(--border);">
+            <div class="card-header" style="margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                <div class="card-title" style="font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: var(--text-primary);">📝 Edit Details</div>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label class="form-label" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">First Name</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Last Name</label>
+                        {{ form.last_name }}
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="form-label" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Email Address</label>
+                    {{ form.email }}
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Update Profile Photo</label>
+                    <div style="background: var(--bg-elevated); padding: 16px; border-radius: var(--radius-md); border: 2px dashed var(--border);">
+                        {{ form.profile_pic }}
+                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 8px;">Max size 5MB (JPG, PNG)</p>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <button type="submit" class="btn btn-primary btn-full" style="flex: 1; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control {
+        width: 100%;
+        background: var(--bg-elevated);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+</style>
+{% endblock %}

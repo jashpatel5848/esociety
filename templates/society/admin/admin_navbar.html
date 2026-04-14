@@ -1,63 +1,74 @@
-{% comment %} <nav class="navbar">
-
-    <div class="logo">
-        <a href="{% url 'admin_dashboard' %}">e-Society Admin</a>
-    </div>
-
-    <ul class="nav-links">
-        <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
-        <li><a href="#">Residents</a></li>
-        <li><a href="#">Guards</a></li>
-        <li><a href="#">Complaints</a></li>
-        <li><a href="#">Notices</a></li>
-    </ul>
-
-    <div class="nav-right">
-        <span class="user-name">
-            👤 {{ request.user.username }}
-        </span>
-
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">
-                Logout
-            </button>
-        </form>
-    </div>
-
-</nav> {% endcomment %}
-
-
 {% load static %}
-<nav class="navbar">
-    <div class="navbar-logo">
-        <a href="{% url 'admin_dashboard' %}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-            <div class="navbar-logo-icon">eS</div>
-            <span style="font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--text-primary);">
+
+<aside class="portal-sidebar">
+    <div class="portal-sidebar-logo">
+        <a href="{% url 'admin_dashboard' %}" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
+            <div
+                style="width:46px;height:46px;border-radius:12px;background:var(--primary);display:grid;place-items:center;font-size:1.25rem;color:#fff;font-weight:900;box-shadow:var(--shadow-glow);">
+                eS</div>
+            <span style="font-family:var(--font-display);font-weight:800;font-size:1.4rem;color:var(--text-primary);">
                 e-<span style="color:var(--primary);">Society</span>
-                <small style="display:block;font-size:0.65rem;font-weight:500;color:var(--text-muted);margin-top:-2px;">Admin Panel</small>
+                <small
+                    style="display:block;font-size:0.85rem;font-weight:600;color:var(--text-muted);margin-top:-2px;">Admin
+                    Panel</small>
             </span>
         </a>
     </div>
 
-    <ul class="nav-links">
-        <li><a href="{% url 'admin_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">🏠 Dashboard</a></li>
-        <li><a href="{% url 'admin_resident_list' %}" class="nav-item {% if 'resident' in request.resolver_match.url_name %}active{% endif %}">👥 Residents</a></li>
-        <li><a href="{% url 'admin_flat_list' %}" class="nav-item {% if 'flat' in request.resolver_match.url_name %}active{% endif %}">🏢 Flats</a></li>
-        <li><a href="{% url 'admin_complaint_list' %}" class="nav-item {% if 'complaint' in request.resolver_match.url_name %}active{% endif %}">🔧 Complaints</a></li>
-        <li><a href="{% url 'admin_notice_list' %}" class="nav-item {% if 'notice' in request.resolver_match.url_name %}active{% endif %}">📢 Notices</a></li>
-        <li><a href="{% url 'admin_financial' %}" class="nav-item {% if 'financial' in request.resolver_match.url_name %}active{% endif %}">💰 Financial</a></li>
-        <li><a href="{% url 'admin_facility_list' %}" class="nav-item {% if 'facility' in request.resolver_match.url_name %}active{% endif %}">🏋️ Facilities</a></li>
-        <li><a href="{% url 'admin_facility_booking_list' %}" class="nav-item {% if 'booking' in request.resolver_match.url_name %}active{% endif %}">📅 Bookings</a></li>
-        <li><a href="{% url 'admin_visitor_list' %}" class="nav-item {% if 'visitor' in request.resolver_match.url_name %}active{% endif %}">🚪 Visitors</a></li>
-        <li><a href="{% url 'admin_alert_list' %}" class="nav-item {% if 'alert' in request.resolver_match.url_name %}active{% endif %}">🚨 Alerts</a></li>
+    <ul class="portal-sidebar-nav">
+        <li><a href="{% url 'admin_dashboard' %}"
+                class="nav-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">🏠
+                Dashboard</a></li>
+        <li><a href="{% url 'admin_resident_list' %}"
+                class="nav-item {% if 'resident' in request.resolver_match.url_name %}active{% endif %}">👥
+                Residents</a></li>
+        <li><a href="{% url 'admin_flat_list' %}"
+                class="nav-item {% if 'flat' in request.resolver_match.url_name %}active{% endif %}">🏢 Flats</a></li>
+        <li><a href="{% url 'admin_complaint_list' %}"
+                class="nav-item {% if 'complaint' in request.resolver_match.url_name %}active{% endif %}">🔧
+                Complaints</a></li>
+        <li><a href="{% url 'admin_notice_list' %}"
+                class="nav-item {% if 'notice' in request.resolver_match.url_name %}active{% endif %}">📢 Notices</a>
+        </li>
+        <li><a href="{% url 'admin_financial' %}"
+                class="nav-item {% if 'financial' in request.resolver_match.url_name %}active{% endif %}">💰
+                Financial</a></li>
+        <li><a href="{% url 'admin_facility_list' %}"
+                class="nav-item {% if 'facility' in request.resolver_match.url_name %}active{% endif %}">🏋️
+                Facilities</a></li>
+        <li><a href="{% url 'admin_facility_booking_list' %}"
+                class="nav-item {% if 'booking' in request.resolver_match.url_name %}active{% endif %}">📅 Bookings</a>
+        </li>
+        <li><a href="{% url 'admin_visitor_list' %}"
+                class="nav-item {% if 'visitor' in request.resolver_match.url_name %}active{% endif %}">🚪 Visitors</a>
+        </li>
+        <li><a href="{% url 'admin_alert_list' %}"
+                class="nav-item {% if 'alert' in request.resolver_match.url_name %}active{% endif %}">🚨 Alerts</a></li>
     </ul>
 
-    <div class="nav-right">
-        <span class="user-name">👤 {{ request.user.first_name|default:request.user.email }}</span>
+    <div class="portal-sidebar-footer">
+        <a href="{% url 'profile' %}" class="portal-user"
+            style="text-decoration: none; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 12px; border-radius: var(--radius-md); transition: background 0.2s;">
+            <div class="portal-user-avatar"
+                style="overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--primary-glow); color: var(--primary);">
+                {% if request.user.profile_pic %}
+                <img src="{{ request.user.profile_pic.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                {{ request.user.first_name|default:request.user.email|make_list|first|upper }}
+                {% endif %}
+            </div>
+            <div class="portal-user-details" style="flex: 1;">
+                <div class="portal-user-name" style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">
+                    {{ request.user.first_name|default:request.user.email }}</div>
+                <div class="portal-user-role" style="font-size: 0.75rem; color: var(--text-muted); text-transform: capitalize;">
+                    {{ request.user.role }}
+                </div>
+            </div>
+        </a>
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+            <button type="button" class="btn btn-danger" onclick="showLogoutModal(this.form)"
+                style="width:100%; justify-content:center; padding: 12px; border-radius: 10px; font-size: 1.05rem;">Logout</button>
         </form>
     </div>
-</nav>
+</aside>

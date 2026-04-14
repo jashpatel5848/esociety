@@ -1,0 +1,68 @@
+{% load static %}
+<header class="landing-header">
+    <div class="landing-nav-container">
+        <!-- Logo -->
+        <a href="{% url 'home' %}" class="landing-logo">
+            <div class="landing-logo-icon">eS</div>
+            <span class="landing-logo-text">e-<span>Society</span></span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="landing-nav-desktop">
+            <a href="{% url 'home' %}#" class="nav-link">Home</a>
+            <a href="{% url 'home' %}#features" class="nav-link">Features</a>
+            <a href="{% url 'home' %}#portals" class="nav-link">Portals</a>
+            <a href="{% url 'home' %}#about" class="nav-link">About</a>
+        </nav>
+
+        <!-- CTA Buttons -->
+        <div class="landing-nav-cta">
+            <a href="{% url 'login' %}" class="btn btn-ghost landing-login-btn">Login</a>
+            <a href="{% url 'signup' %}" class="btn btn-primary landing-signup-btn">Get Started</a>
+            
+            <!-- Mobile Toggle -->
+            <button class="mobile-menu-toggle" aria-label="Toggle menu" onclick="toggleMobileMenu()">
+                <span class="toggle-bar"></span>
+                <span class="toggle-bar"></span>
+                <span class="toggle-bar"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-header">
+                <span class="landing-logo-text">e-<span>Society</span></span>
+                <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
+            </div>
+            <nav class="mobile-nav-links">
+                <a href="{% url 'home' %}#" onclick="toggleMobileMenu()">Home</a>
+                <a href="{% url 'home' %}#features" onclick="toggleMobileMenu()">Features</a>
+                <a href="{% url 'home' %}#portals" onclick="toggleMobileMenu()">Portals</a>
+                <a href="{% url 'home' %}#about" onclick="toggleMobileMenu()">About</a>
+                <hr>
+                <a href="{% url 'login' %}" class="btn btn-ghost btn-full">Login</a>
+                <a href="{% url 'signup' %}" class="btn btn-primary btn-full">Get Started</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<script>
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileMenu');
+        menu.classList.toggle('active');
+        document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+    }
+
+    // Scroll effect for header
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('.landing-header');
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+</script>

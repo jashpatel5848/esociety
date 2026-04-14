@@ -3,18 +3,18 @@
 {% comment %} {% block content %}
 
 <div class="auth-wrapper">
-    <div class="auth-card">
-        <h2 class="auth-title">Login</h2>
+  <div class="auth-card">
+    <h2 class="auth-title">Login</h2>
 
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
 
-            <button type="submit" class="btn btn-primary full-btn">
-                Login
-            </button>
-        </form>
-    </div>
+      <button type="submit" class="btn btn-primary full-btn">
+        Login
+      </button>
+    </form>
+  </div>
 </div>
 
 {% endblock %} {% endcomment %}
@@ -24,43 +24,41 @@
 
 {% block content %}
 
-<div style="min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px 24px;background:linear-gradient(135deg,#F0F4FF 0%,#F4F6FA 60%,#EFF6FF 100%);">
-  <div style="background:#fff;border:1px solid #E2E8F0;border-radius:24px;padding:48px 40px;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,0.08);">
+<div
+  style="min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px 24px;background:linear-gradient(135deg,#F0F4FF 0%,#F4F6FA 60%,#EFF6FF 100%);">
+  <div
+    style="background:#fff;border:1px solid #E2E8F0;border-radius:24px;padding:48px 40px;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,0.08);">
 
     <!-- Logo -->
     <div style="text-align:center;margin-bottom:32px;">
-      <div style="width:52px;height:52px;background:#1E6FF1;border-radius:14px;display:grid;place-items:center;margin:0 auto 16px;font-family:'Outfit',sans-serif;font-weight:900;font-size:1.25rem;color:#fff;box-shadow:0 0 20px rgba(30,111,241,0.3);">eS</div>
-      <h2 style="font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;color:#0F172A;margin-bottom:6px;">Welcome Back</h2>
+      <div
+        style="width:52px;height:52px;background:#1E6FF1;border-radius:14px;display:grid;place-items:center;margin:0 auto 16px;font-family:'Outfit',sans-serif;font-weight:900;font-size:1.25rem;color:#fff;box-shadow:0 0 20px rgba(30,111,241,0.3);">
+        eS</div>
+      <h2 style="font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;color:#0F172A;margin-bottom:6px;">
+        Welcome Back</h2>
       <p style="font-size:0.9rem;color:#94A3B8;">Login to your e-Society account</p>
     </div>
 
-    <!-- Messages -->
-    {% if messages %}
-      {% for message in messages %}
-      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:0.875rem;color:#EF4444;display:flex;align-items:center;gap:8px;">
-        ❌ {{ message }}
-      </div>
-      {% endfor %}
-    {% endif %}
-
     <!-- Form -->
-    <form method="post">
+    <form method="post" autocomplete="off">
       {% csrf_token %}
 
       <div style="margin-bottom:20px;">
-        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:8px;">Email Address <span style="color:#EF4444;">*</span></label>
+        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:8px;">Email Address
+          <span style="color:#EF4444;">*</span></label>
         <input type="email" name="email" placeholder="your@email.com" required
           style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:11px 14px;outline:none;transition:all 0.2s;font-family:'DM Sans',sans-serif;"
           onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)'"
-          onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"/>
+          onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />
       </div>
 
       <div style="margin-bottom:28px;">
-        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:8px;">Password <span style="color:#EF4444;">*</span></label>
-        <input type="password" name="password" placeholder="Enter your password" required
+        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:8px;">Password <span
+            style="color:#EF4444;">*</span></label>
+        <input type="password" name="password" placeholder="Enter your password" required autocomplete="off" spellcheck="false"
           style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:11px 14px;outline:none;transition:all 0.2s;font-family:'DM Sans',sans-serif;"
           onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)'"
-          onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"/>
+          onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />
       </div>
 
       <button type="submit"
@@ -74,7 +72,8 @@
     <!-- Footer -->
     <div style="text-align:center;margin-top:24px;font-size:0.875rem;color:#94A3B8;">
       Don't have an account?
-      <a href="{% url 'signup' %}" style="color:#1E6FF1;font-weight:600;text-decoration:none;margin-left:4px;">Create Account</a>
+      <a href="{% url 'signup' %}" style="color:#1E6FF1;font-weight:600;text-decoration:none;margin-left:4px;">Create
+        Account</a>
     </div>
 
   </div>

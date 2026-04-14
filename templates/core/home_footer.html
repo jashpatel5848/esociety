@@ -1,0 +1,77 @@
+{% load static %}
+<footer class="landing-footer">
+    <div class="landing-footer-top">
+        <div class="footer-grid">
+            <!-- Brand Column -->
+            <div class="footer-col brand-col">
+                <a href="{% url 'home' %}" class="landing-logo">
+                    <div class="landing-logo-icon">eS</div>
+                    <span class="landing-logo-text">e-<span>Society</span></span>
+                </a>
+                <p class="footer-desc">
+                    The complete digital solution for modern residential community management. We simplify society operations with smart technology.
+                </p>
+                <div class="footer-socials">
+                    <a href="#" class="social-link" aria-label="Facebook">FB</a>
+                    <a href="#" class="social-link" aria-label="Twitter">TW</a>
+                    <a href="#" class="social-link" aria-label="Instagram">IG</a>
+                    <a href="#" class="social-link" aria-label="LinkedIn">LN</a>
+                </div>
+            </div>
+
+            <!-- Links Column -->
+            <div class="footer-col">
+                <h4 class="footer-title">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'home' %}#features">Features</a></li>
+                    <li><a href="{% url 'home' %}#portals">User Portals</a></li>
+                    <li><a href="{% url 'signup' %}">Register Society</a></li>
+                    <li><a href="{% url 'login' %}">Member Login</a></li>
+                </ul>
+            </div>
+
+            <!-- Features Column -->
+            <div class="footer-col">
+                <h4 class="footer-title">Features</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Visitor Management</a></li>
+                    <li><a href="#">Facility Booking</a></li>
+                    <li><a href="#">Complaint System</a></li>
+                    <li><a href="#">Billing & Payment</a></li>
+                    <li><a href="#">Emergency Alerts</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Column -->
+            <div class="footer-col">
+                <h4 class="footer-title">Contact Us</h4>
+                <ul class="footer-contact">
+                    <li>
+                        <span class="icon">📍</span>
+                        <span>123 Smart City, Tech Hub, <br>India - 400001</span>
+                    </li>
+                    <li>
+                        <span class="icon">📞</span>
+                        <span>+91 98765 43210</span>
+                    </li>
+                    <li>
+                        <span class="icon">✉️</span>
+                        <span>support@esociety.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="landing-footer-bottom">
+        <div class="footer-container bottom-flex">
+            <p>© 2026 e-Society Management System. All rights reserved.</p>
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+    </div>
+</footer>

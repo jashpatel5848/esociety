@@ -42,17 +42,22 @@
                 </div>
                 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
                     {% if v.status == 'pending' %}
-                        <span class="badge badge-warning">Pending</span>
-                        <div style="display:flex;gap:6px;">
-                            <a href="{% url 'resident_approve_visitor' v.pk %}" class="btn btn-primary btn-sm">✅ Approve</a>
-                            <a href="{% url 'resident_deny_visitor' v.pk %}" class="btn btn-danger btn-sm">❌ Deny</a>
-                        </div>
+                        {% if v.approved_by == 'resident' %}
+                            <span class="badge" style="background:rgba(16,185,129,0.1);color:#10B981;border:1px solid rgba(16,185,129,0.2);">Pre-authorized</span>
+                            <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:6px 12px;text-align:center;">
+                                <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:2px;">OTP</div>
+                                <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:800;letter-spacing:0.2em;color:var(--primary);">{{ v.otp }}</div>
+                            </div>
+                        {% else %}
+                            <span class="badge badge-warning">Gate Request</span>
+                            <div style="display:flex;gap:6px;">
+                                <a href="{% url 'resident_approve_visitor' v.pk %}" class="btn btn-primary btn-sm">✅ Approve</a>
+                                <a href="{% url 'resident_deny_visitor' v.pk %}" class="btn btn-danger btn-sm">❌ Deny</a>
+                            </div>
+                        {% endif %}
                     {% elif v.status == 'approved' %}
-                        <span class="badge badge-success">Approved</span>
-                        <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:6px 12px;text-align:center;">
-                            <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:2px;">OTP</div>
-                            <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:800;letter-spacing:0.2em;color:var(--primary);">{{ v.otp }}</div>
-                        </div>
+                        <span class="badge badge-success">Inside</span>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Entered: {{ v.entry_time|time:"H:i" }}</div>
                     {% elif v.status == 'denied' %}
                         <span class="badge badge-danger">Denied</span>
                     {% elif v.status == 'exited' %}

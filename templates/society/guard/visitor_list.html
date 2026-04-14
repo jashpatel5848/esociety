@@ -46,21 +46,28 @@
                         </td>
                         <td>
                             {% if v.resident.flat %}
-                                Flat {{ v.resident.flat.flat_number }}
+                                <div style="font-weight:600;">Flat {{ v.resident.flat.flat_number }}</div>
+                                <small style="color:var(--text-muted);">👤 {{ v.resident.user.first_name|default:v.resident.user.email }}</small>
                             {% else %}—{% endif %}
                         </td>
                         <td>
-                            {% if v.status == 'approved' %}
+                            {% if v.status == 'approved' or v.status == 'exited' %}
                             <span style="font-family:var(--font-display);font-weight:800;letter-spacing:0.15em;color:var(--primary);">
                                 {{ v.otp }}
                             </span>
-                            {% else %}—{% endif %}
+                            {% else %}
+                            <span style="color:var(--text-muted);font-size:0.8rem;">Masked 🔒</span>
+                            {% endif %}
                         </td>
                         <td>
                             {% if v.status == 'approved' %}
-                                <span class="badge badge-success">Approved</span>
+                                {% if v.entry_time %}
+                                    <span class="badge badge-success">Inside</span>
+                                {% else %}
+                                    <span class="badge" style="background:rgba(16,185,129,0.1);color:#10B981;border:1px solid rgba(16,185,129,0.2);">Approved (Waiting)</span>
+                                {% endif %}
                             {% elif v.status == 'pending' %}
-                                <span class="badge badge-warning">Pending</span>
+                                <span class="badge badge-warning">Awaiting Approval</span>
                             {% elif v.status == 'denied' %}
                                 <span class="badge badge-danger">Denied</span>
                             {% elif v.status == 'exited' %}

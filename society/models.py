@@ -92,7 +92,12 @@ class Visitor(models.Model):
     purpose         = models.CharField(max_length=20, choices=PURPOSE_CHOICES, default='guest')
     vehicle_number  = models.CharField(max_length=15, blank=True, null=True)
     otp             = models.CharField(max_length=6, blank=True, null=True)
+    APPROVED_BY_CHOICES = (
+        ('resident', 'Resident'),
+        ('guard',    'Guard'),
+    )
     status          = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    approved_by     = models.CharField(max_length=15, choices=APPROVED_BY_CHOICES, default='resident')
     entry_time      = models.DateTimeField(blank=True, null=True)
     exit_time       = models.DateTimeField(blank=True, null=True)
     created_at      = models.DateTimeField(auto_now_add=True)

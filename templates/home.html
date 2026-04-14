@@ -3,81 +3,297 @@
 
 {% block content %}
 
-<section style="min-height:auto;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;background:linear-gradient(135deg,#F0F4FF 0%,#F4F6FA 60%,#EFF6FF 100%);">
+<!-- HERO SECTION -->
+<section id="home" style="min-height:auto;display:flex;align-items:center;justify-content:center;text-align:center;padding:140px 24px 100px;background:linear-gradient(135deg,#F0F4FF 0%,#F4F6FA 60%,#EFF6FF 100%);">
   <div>
-    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(30,111,241,0.08);border:1px solid rgba(30,111,241,0.2);border-radius:999px;padding:6px 16px;font-size:0.8125rem;font-weight:600;color:#1E6FF1;margin-bottom:24px;">
+    <div class="section-badge">
       🏢 Smart Residential Management
     </div>
-    <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:#0F172A;margin-bottom:16px;letter-spacing:-0.03em;">
-      Welcome to <span style="color:#1E6FF1;">e-Society</span>
+    <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;color:#0F172A;margin-bottom:16px;letter-spacing:-0.04em;line-height:1.1;">
+      Elevate Your <br><span style="color:#1E6FF1;">Society Living</span>
     </h1>
-    <p style="font-size:1.0625rem;color:#475569;max-width:500px;margin:0 auto 36px;line-height:1.75;">
-      Smart Digital Solution for Modern Residential Communities
+    <p style="font-size:1.125rem;color:#475569;max-width:550px;margin:0 auto 40px;line-height:1.75;">
+      Experience the future of gated communities with our intuitive, secure, and all-in-one digital management platform.
     </p>
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Login</a>
-      <a href="{% url 'signup' %}" class="btn btn-ghost btn-lg">Create Account</a>
-    </div>
-    <div style="display:flex;gap:48px;justify-content:center;margin-top:56px;flex-wrap:wrap;align-items:center;">
-      <div style="text-align:center;"><div style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#0F172A;">3</div><div style="font-size:0.8rem;color:#94A3B8;margin-top:4px;">User Roles</div></div>
-      <div style="width:1px;height:40px;background:#E2E8F0;"></div>
-      <div style="text-align:center;"><div style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#0F172A;">6+</div><div style="font-size:0.8rem;color:#94A3B8;margin-top:4px;">Core Features</div></div>
-      <div style="width:1px;height:40px;background:#E2E8F0;"></div>
-      <div style="text-align:center;"><div style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#0F172A;">24/7</div><div style="font-size:0.8rem;color:#94A3B8;margin-top:4px;">Security</div></div>
-      <div style="width:1px;height:40px;background:#E2E8F0;"></div>
-      <div style="text-align:center;"><div style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#0F172A;">100%</div><div style="font-size:0.8rem;color:#94A3B8;margin-top:4px;">Digital</div></div>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="{% url 'signup' %}" class="btn btn-primary btn-lg" style="padding: 16px 36px; font-size: 1.1rem; box-shadow: 0 10px 30px rgba(30,111,241,0.3);">Get Started</a>
+      <a href="#features" class="btn btn-ghost btn-lg" style="padding: 16px 36px; font-size: 1.1rem;">Explore Features</a>
     </div>
   </div>
 </section>
 
-<section style="padding:80px 24px;background:#fff;">
+<!-- TRUST BAR -->
+<div class="trust-bar">
+    <div class="trust-logos">
+        <span class="trust-logo">PREMIER PROPERTIES</span>
+        <span class="trust-logo">urbanLiving</span>
+        <span class="trust-logo">SKYLINE</span>
+        <span class="trust-logo">grandResidency</span>
+        <span class="trust-logo">ECOHOME</span>
+    </div>
+</div>
+
+<!-- STATISTICS SECTION -->
+<section class="landing-section" style="background: #fff;">
+    <div class="stat-grid">
+        <div class="stat-item">
+            <div class="stat-number">50k+</div>
+            <div class="stat-label">Visitors Verified</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">12k+</div>
+            <div class="stat-label">Resolved Issues</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Partner Societies</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">4.9/5</div>
+            <div class="stat-label">User Rating</div>
+        </div>
+    </div>
+</section>
+
+<!-- ROLE BENEFITS SWITCHER -->
+<section class="landing-section" style="background: #F8FAFC;">
+    <div style="max-width:1100px;margin:0 auto;text-align:center;">
+        <div class="section-badge">Tailored For You</div>
+        <h2 style="font-size: 2.5rem; margin-bottom: 48px;">One Platform, Three Experiences</h2>
+        
+        <div class="role-tabs">
+            <button class="role-tab-btn active" onclick="switchRole(event, 'resident-panel')">For Residents</button>
+            <button class="role-tab-btn" onclick="switchRole(event, 'admin-panel')">For Society Admins</button>
+            <button class="role-tab-btn" onclick="switchRole(event, 'guard-panel')">For Security Teams</button>
+        </div>
+
+        <!-- Resident Panel -->
+        <div id="resident-panel" class="role-content-panel active">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:center; text-align: left;">
+                <div>
+                    <h3 style="font-size: 1.75rem; margin-bottom: 20px;">Seamless Living at Your Fingertips</h3>
+                    <p style="margin-bottom: 24px;">Manage your entire society life from a single dashboard. From visitors to maintenance, stay in control of your home environment.</p>
+                    <ul style="display:flex; flex-direction:column; gap:12px;">
+                        <li>🚀 <strong>Instant Pre-approval:</strong> Send OTPs to guests for fast entry.</li>
+                        <li>🔧 <strong>One-Click Complaint:</strong> Raise issues with photos in seconds.</li>
+                        <li>📅 <strong>Easy Booking:</strong> Reserve the gym or clubhouse instantly.</li>
+                    </ul>
+                </div>
+                <div style="background: var(--bg-surface); padding: 40px; border-radius: 24px; box-shadow: var(--shadow-lg);">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">📱</div>
+                    <div style="font-weight: 800; font-size: 1.25rem; margin-bottom: 12px;">Resident Portal</div>
+                    <div style="width:100%; height:8px; background:var(--bg-base); border-radius:4px; margin-bottom:12px;">
+                        <div style="width:85%; height:100%; background:var(--primary); border-radius:4px;"></div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">98% Resident Satisfaction Rate</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="admin-panel" class="role-content-panel">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:center; text-align: left;">
+                <div>
+                    <h3 style="font-size: 1.75rem; margin-bottom: 20px;">Centralized Control Center</h3>
+                    <p style="margin-bottom: 24px;">Empower your committee members with tools to manage finances, maintenance, and community engagement efficiently.</p>
+                    <ul style="display:flex; flex-direction:column; gap:12px;">
+                        <li>💰 <strong>Auto-Maintenance:</strong> Track dues and generate reports.</li>
+                        <li>📢 <strong>Verified Notices:</strong> Reach every resident instantly.</li>
+                        <li>📊 <strong>Rich Insights:</strong> Data-driven decision making for your society.</li>
+                    </ul>
+                </div>
+                <div style="background: var(--bg-surface); padding: 40px; border-radius: 24px; box-shadow: var(--shadow-lg);">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">📊</div>
+                    <div style="font-weight: 800; font-size: 1.25rem; margin-bottom: 12px;">Admin Dashboard</div>
+                    <div style="width:100%; height:8px; background:var(--bg-base); border-radius:4px; margin-bottom:12px;">
+                        <div style="width:92%; height:100%; background:#10b981; border-radius:4px;"></div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Efficiency Boost by 40%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guard Panel -->
+        <div id="guard-panel" class="role-content-panel">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:center; text-align: left;">
+                <div>
+                    <h3 style="font-size: 1.75rem; margin-bottom: 20px;">Next-Gen Security Tools</h3>
+                    <p style="margin-bottom: 24px;">Equip your security team with smart verification tools that keep your community safe without the paperwork.</p>
+                    <ul style="display:flex; flex-direction:column; gap:12px;">
+                        <li>🔑 <strong>OTP Verification:</strong> Instant guest entry confirmation.</li>
+                        <li>🚨 <strong>Panic Alerts:</strong> Real-time emergency notifications.</li>
+                        <li>📦 <strong>Delivery Log:</strong> Seamless management of daily couriers.</li>
+                    </ul>
+                </div>
+                <div style="background: var(--bg-surface); padding: 40px; border-radius: 24px; box-shadow: var(--shadow-lg);">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">👮</div>
+                    <div style="font-weight: 800; font-size: 1.25rem; margin-bottom: 12px;">Guard Terminal</div>
+                    <div style="width:100%; height:8px; background:var(--bg-base); border-radius:4px; margin-bottom:12px;">
+                        <div style="width:99%; height:100%; background:#f59e0b; border-radius:4px;"></div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Verified Security Record</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- UI SHOWCASE (Mockup) -->
+<section class="landing-section" style="background:#fff;">
+    <div style="max-width:1100px;margin:0 auto;text-align:center;">
+        <div class="section-badge">Beautiful Design</div>
+        <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Modern UI For Modern Living</h2>
+        <p style="color:var(--text-secondary); max-width: 600px; margin: 0 auto;">Our interface isn't just functional—it's designed to be a joy to use on any device.</p>
+        
+        <div class="mockup-container">
+            <div class="mockup-frame">
+                <div class="mockup-screen">
+                    <div style="padding: 40px; text-align: left; display: flex; gap: 32px; height: 100%;">
+                        <div style="width: 200px; background: #fff; border-radius: 16px; padding: 20px;">
+                            <div style="height: 24px; width: 60%; background: #EEF2FF; margin-bottom: 20px;"></div>
+                            <div style="height: 12px; width: 100%; background: #F8FAFC; margin-bottom: 12px;"></div>
+                            <div style="height: 12px; width: 80%; background: #F8FAFC; margin-bottom: 12px;"></div>
+                            <div style="height: 12px; width: 100%; background: #F8FAFC;"></div>
+                        </div>
+                        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px;">
+                            <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 20px;"></div>
+                            <div style="background: #fff; border-radius: 20px; padding: 24px;">
+                                <div style="height: 20px; width: 40%; background: #F4F6FA; margin-bottom: 24px;"></div>
+                                <div style="height: 32px; width: 100%; background: #F4F6FA; margin-bottom: 16px;"></div>
+                                <div style="height: 32px; width: 100%; background: #F4F6FA; margin-bottom: 16px;"></div>
+                                <div style="height: 48px; width: 100%; background: #1E6FF1; border-radius: 8px; margin-top: 32px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section id="features" class="landing-section" style="background:#F4F6FA;">
   <div style="max-width:1100px;margin:0 auto;text-align:center;">
-    <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1E6FF1;display:block;margin-bottom:12px;">Portals</span>
-    <h2 style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#0F172A;margin-bottom:12px;">Login As Your Role</h2>
-    <p style="color:#475569;margin-bottom:48px;">Every user gets a dedicated dashboard for their responsibilities.</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
-      <a href="{% url 'login' %}" style="background:#fff;border:1.5px solid #E2E8F0;border-radius:20px;padding:36px 28px;text-align:center;text-decoration:none;display:block;transition:all 0.3s;" onmouseover="this.style.borderColor='#1E6FF1';this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(30,111,241,0.12)'" onmouseout="this.style.borderColor='#E2E8F0';this.style.transform='';this.style.boxShadow=''">
-        <div style="font-size:2.5rem;margin-bottom:16px;">🛡️</div>
-        <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#0F172A;margin-bottom:10px;">Admin / Manager</div>
-        <p style="font-size:0.875rem;color:#64748B;line-height:1.65;">Oversee all operations, manage residents & staff, track finances.</p>
-        <div style="margin-top:20px;font-size:0.875rem;font-weight:600;color:#1E6FF1;">Go to Admin Portal →</div>
-      </a>
-      <a href="{% url 'login' %}" style="background:#fff;border:1.5px solid #E2E8F0;border-radius:20px;padding:36px 28px;text-align:center;text-decoration:none;display:block;transition:all 0.3s;" onmouseover="this.style.borderColor='#10B981';this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(16,185,129,0.12)'" onmouseout="this.style.borderColor='#E2E8F0';this.style.transform='';this.style.boxShadow=''">
-        <div style="font-size:2.5rem;margin-bottom:16px;">🏠</div>
-        <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#0F172A;margin-bottom:10px;">Resident</div>
-        <p style="font-size:0.875rem;color:#64748B;line-height:1.65;">Raise complaints, book facilities, approve visitors, view notices.</p>
-        <div style="margin-top:20px;font-size:0.875rem;font-weight:600;color:#10B981;">Go to Resident Portal →</div>
-      </a>
-      <a href="{% url 'login' %}" style="background:#fff;border:1.5px solid #E2E8F0;border-radius:20px;padding:36px 28px;text-align:center;text-decoration:none;display:block;transition:all 0.3s;" onmouseover="this.style.borderColor='#F59E0B';this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(245,158,11,0.12)'" onmouseout="this.style.borderColor='#E2E8F0';this.style.transform='';this.style.boxShadow=''">
-        <div style="font-size:2.5rem;margin-bottom:16px;">🔒</div>
-        <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#0F172A;margin-bottom:10px;">Security Guard</div>
-        <p style="font-size:0.875rem;color:#64748B;line-height:1.65;">Monitor entries, verify OTP approvals, manage deliveries.</p>
-        <div style="margin-top:20px;font-size:0.875rem;font-weight:600;color:#F59E0B;">Go to Guard Portal →</div>
-      </a>
+    <span class="section-badge">Core Capabilities</span>
+    <h2 style="font-family:'Outfit',sans-serif;font-size:2.5rem;font-weight:800;color:#0F172A;margin-bottom:48px;">Everything You Need</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;text-align:left;">
+      <div class="card" style="padding: 32px; background: #fff; border-radius: 20px;"><div style="font-size:2rem;margin-bottom:16px;">📋</div><div style="font-weight:800;color:#0F172A;margin-bottom:8px;font-size:1.15rem;">Visitor Management</div><p style="font-size: 0.95rem;">Digital entry approvals with QR/OTP access and real-time app notifications.</p></div>
+      <div class="card" style="padding: 32px; background: #fff; border-radius: 20px;"><div style="font-size:2rem;margin-bottom:16px;">🔧</div><div style="font-weight:800;color:#0F172A;margin-bottom:8px;font-size:1.15rem;">Complaint Tracking</div><p style="font-size: 0.95rem;">Report and track maintenance issues with photo uploads and resolution logs.</p></div>
+      <div class="card" style="padding: 32px; background: #fff; border-radius: 20px;"><div style="font-size:2rem;margin-bottom:16px;">📅</div><div style="font-weight:800;color:#0F172A;margin-bottom:8px;font-size:1.15rem;">Facility Booking</div><p style="font-size: 0.95rem;">Book gym, pool, or clubhouse with live availability and instant payment.</p></div>
+      <div class="card" style="padding: 32px; background: #fff; border-radius: 20px;"><div style="font-size:2rem;margin-bottom:16px;">💰</div><div style="font-weight:800;color:#0F172A;margin-bottom:8px;font-size:1.15rem;">Financial Hub</div><p style="font-size: 0.95rem;">Automated maintenance billing, payment history, and expense transparency.</p></div>
+      <div class="card" style="padding: 32px; background: #fff; border-radius: 20px;"><div style="font-size:2rem;margin-bottom:16px;">📢</div><div style="font-weight:800;color:#0F172A;margin-bottom:8px;font-size:1.15rem;">Smart Notice Board</div><p style="font-size: 0.95rem;">Broadcast important announcements to everyone's phone instantly.</p></div>
+      <div class="card" style="padding: 32px; background: #fff; border-radius: 20px;"><div style="font-size:2rem;margin-bottom:16px;">🚨</div><div style="font-weight:800;color:#0F172A;margin-bottom:8px;font-size:1.15rem;">Emergency Help</div><p style="font-size: 0.95rem;">Panic alerts that notify security and neighbors immediately in crisis.</p></div>
     </div>
   </div>
 </section>
 
-<section style="padding:80px 24px;background:#F4F6FA;">
-  <div style="max-width:1100px;margin:0 auto;text-align:center;">
-    <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1E6FF1;display:block;margin-bottom:12px;">What We Offer</span>
-    <h2 style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#0F172A;margin-bottom:48px;">Our Features</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;text-align:left;">
-      <div class="card"><div style="font-size:1.75rem;margin-bottom:12px;">📋</div><div style="font-weight:700;color:#0F172A;margin-bottom:6px;">Visitor Management</div><p>Digital entry approvals with QR/OTP access and real-time notifications.</p></div>
-      <div class="card"><div style="font-size:1.75rem;margin-bottom:12px;">🔧</div><div style="font-weight:700;color:#0F172A;margin-bottom:6px;">Complaint Tracking</div><p>Report and track maintenance issues with full resolution history.</p></div>
-      <div class="card"><div style="font-size:1.75rem;margin-bottom:12px;">📅</div><div style="font-weight:700;color:#0F172A;margin-bottom:6px;">Facility Booking</div><p>Book gym, pool, clubhouse with live availability calendar.</p></div>
-      <div class="card"><div style="font-size:1.75rem;margin-bottom:12px;">💰</div><div style="font-weight:700;color:#0F172A;margin-bottom:6px;">Financial Management</div><p>Track dues, generate invoices and get society expense reports.</p></div>
-      <div class="card"><div style="font-size:1.75rem;margin-bottom:12px;">📢</div><div style="font-weight:700;color:#0F172A;margin-bottom:6px;">Notice Board</div><p>Post notices, announce events and run community polls.</p></div>
-      <div class="card"><div style="font-size:1.75rem;margin-bottom:12px;">🚨</div><div style="font-weight:700;color:#0F172A;margin-bottom:6px;">Emergency Alerts</div><p>Instantly notify residents and security in emergencies.</p></div>
+<!-- TESTIMONIALS SECTION -->
+<section class="landing-section" style="background: #fff;">
+    <div style="max-width:1100px;margin:0 auto;text-align:center;">
+        <span class="section-badge">Success Stories</span>
+        <h2 style="font-size: 2.5rem; margin-bottom: 48px;">Trusted by Thousands</h2>
+        
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:32px;">
+            <div style="padding: 40px; background: #F8FAFC; border-radius: 24px; text-align: left;">
+                <div style="color: #FBBF24; font-size: 1.25rem; margin-bottom: 16px;">★★★★★</div>
+                <p style="font-style: italic; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.7;">"Replacing our paper registers with e-Society was the best decision for our community. Safety has improved significantly."</p>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:48px; height:48px; border-radius:50%; background:var(--primary-glow); display:grid; place-items:center;">👨</div>
+                    <div>
+                        <div style="font-weight:800; font-size:0.95rem;">Rajesh Kumar</div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">Chairman, Silver Palms</div>
+                    </div>
+                </div>
+            </div>
+            <div style="padding: 40px; background: #F8FAFC; border-radius: 24px; text-align: left;">
+                <div style="color: #FBBF24; font-size: 1.25rem; margin-bottom: 16px;">★★★★★</div>
+                <p style="font-style: italic; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.7;">"I love how I can pre-approve my weekend guests before they even reach the gate. It's so smooth!"</p>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:48px; height:48px; border-radius:50%; background:var(--primary-glow); display:grid; place-items:center;">👩</div>
+                    <div>
+                        <div style="font-weight:800; font-size:0.95rem;">Priya Sharma</div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">Resident, Highrise Society</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </section>
 
-<section style="padding:80px 24px;background:#fff;text-align:center;">
-  <div style="max-width:700px;margin:0 auto;">
-    <h2 style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#0F172A;margin-bottom:16px;">Why Choose e-Society?</h2>
-    <p style="font-size:1rem;color:#475569;line-height:1.75;">e-Society provides a secure, transparent and efficient way to manage gated communities. From visitor management to financial tracking, everything is handled digitally.</p>
-  </div>
+<!-- FAQ SECTION -->
+<section id="faq" class="landing-section" style="background: #F8FAFC;">
+    <div style="max-width:800px;margin:0 auto;text-align:center;">
+        <span class="section-badge">Got Questions?</span>
+        <h2 style="font-size: 2.5rem; margin-bottom: 48px;">Frequently Asked Questions</h2>
+        
+        <div class="faq-grid">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>How secure is my society data?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>We use banking-grade encryption and secure cloud infrastructure to ensure your data is always protected and private.</p>
+                </div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>Is training provided for guards?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, we provide specialized, easy-to-understand training for security staff to ensure they can use the platform fluently.</p>
+                </div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>Can residents use this on multiple devices?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely. Every family member can have their own login and use it on multiple phones or tablets simultaneously.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+    <div class="cta-card">
+        <h2 class="cta-title">Ready to Modernize Your Community?</h2>
+        <p class="cta-text">Join hundreds of societies that have already transformed their living experience with e-Society.</p>
+        <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+            <a href="{% url 'signup' %}" class="btn btn-primary btn-lg" style="background: #fff; color: var(--primary); padding: 16px 40px; border-radius: 12px; font-weight: 800;">Get Started Now</a>
+            <a href="mailto:contact@esociety.com" class="btn btn-ghost btn-lg" style="border: 1.5px solid rgba(255,255,255,0.2); color: #fff; padding: 16px 40px; border-radius: 12px;">Contact Sales</a>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Role Switcher Logic
+    function switchRole(event, roleId) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.role-tab-btn').forEach(btn => btn.classList.remove('active'));
+        // Add active class to clicked button
+        event.currentTarget.classList.add('active');
+        
+        // Hide all panels
+        document.querySelectorAll('.role-content-panel').forEach(panel => panel.classList.remove('active'));
+        // Show target panel
+        document.getElementById(roleId).classList.add('active');
+    }
+
+    // FAQ Accordion Logic
+    function toggleFaq(element) {
+        const isActive = element.classList.contains('active');
+        // Close all other items
+        document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
+        // If not already active, open it
+        if (!isActive) {
+            element.classList.add('active');
+        }
+    }
+</script>
 
 {% endblock %}
