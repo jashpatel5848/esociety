@@ -111,7 +111,7 @@
                                 <a href="{% url 'guard_approve_entry' v.pk %}" 
                                    class="btn btn-ghost btn-sm" 
                                    style="color:var(--text-secondary);font-size:0.75rem;border:1px dashed var(--border);"
-                                   onclick="return confirm('No response from resident? Authorize entry manually as Guard?')">
+                                   onclick="return customConfirm(event, 'No response from resident? Authorize entry manually as Guard?', 'Manual Guard Override', '🛡️', 'Authorize Entry')">
                                    🛡️ Guard Authorize
                                 </a>
                             {% endif %}

@@ -74,16 +74,15 @@
         {% endif %}
     </div>
 
-    <!-- Logout Confirmation Modal -->
-    <div id="logoutModal" class="modal-overlay">
+    <!-- Unified Confirmation Modal -->
+    <div id="customConfirmModal" class="modal-overlay">
         <div class="confirm-modal">
-            <div class="confirm-modal-icon">🚪</div>
-            <h3 class="confirm-modal-title">Confirm Logout</h3>
-            <p class="confirm-modal-text">Are you sure you want to logout? <br> You'll need to login again to access
-                your account.</p>
+            <div id="confirmModalIcon" class="confirm-modal-icon">⚠️</div>
+            <h3 id="confirmModalTitle" class="confirm-modal-title">Confirm Action</h3>
+            <p id="confirmModalText" class="confirm-modal-text">Are you sure?</p>
             <div class="confirm-modal-actions">
-                <button type="button" class="btn-modal-cancel" onclick="closeLogoutModal()">Cancel</button>
-                <button type="button" class="btn-modal-confirm" onclick="executeLogout()">Yes, Logout</button>
+                <button type="button" class="btn-modal-cancel" onclick="closeConfirmModal()">Cancel</button>
+                <button type="button" id="confirmModalBtn" class="btn-modal-confirm">Confirm</button>
             </div>
         </div>
     </div>
@@ -114,29 +113,65 @@
             });
         }
 
+        let confirmActionCallback = null;
         let formToSubmit = null;
 
         function showLogoutModal(form) {
             formToSubmit = form;
-            document.getElementById('logoutModal').classList.add('active');
+            showConfirmModal(
+                'Confirm Logout', 
+                'Are you sure you want to logout? <br> You\'ll need to login again to access your account.', 
+                '🚪', 
+                'Yes, Logout', 
+                function() {
+                    if (formToSubmit) formToSubmit.submit();
+                }
+            );
+        }
+
+        function showConfirmModal(title, text, icon, btnText, confirmCallback) {
+            document.getElementById('confirmModalTitle').innerText = title;
+            document.getElementById('confirmModalText').innerHTML = text; // Allow BR tags
+            document.getElementById('confirmModalIcon').innerText = icon || '⚠️';
+            document.getElementById('confirmModalBtn').innerText = btnText || 'Confirm';
+            
+            confirmActionCallback = confirmCallback;
+            
+            document.getElementById('customConfirmModal').classList.add('active');
             document.body.style.overflow = 'hidden'; // Stop scrolling
+            
+            const confirmBtn = document.getElementById('confirmModalBtn');
+            confirmBtn.onclick = function() {
+                const cb = confirmActionCallback;
+                closeConfirmModal();
+                if (cb) cb();
+            };
         }
 
-        function closeLogoutModal() {
-            document.getElementById('logoutModal').classList.remove('active');
+        function closeConfirmModal() {
+            document.getElementById('customConfirmModal').classList.remove('active');
             document.body.style.overflow = 'auto'; // Re-enable scrolling
-            formToSubmit = null;
         }
 
-        function executeLogout() {
-            if (formToSubmit) {
-                formToSubmit.submit();
-            }
+        // Global function to replace standard inline confirm(...) calls safely!
+        function customConfirm(event, message, title="Confirm Action", icon="⚠️", btnText="Confirm") {
+            event.preventDefault();
+            const target = event.currentTarget || event.target;
+            
+            showConfirmModal(title, message, icon, btnText, function() {
+                if (target.tagName.toLowerCase() === 'a' && target.href) {
+                    window.location.href = target.href;
+                } else if (target.tagName.toLowerCase() === 'button' || target.tagName.toLowerCase() === 'input') {
+                    const form = target.closest('form');
+                    if (form) form.submit();
+                }
+            });
+            return false;
         }
 
         // Close modal on escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeLogoutModal();
+            if (e.key === 'Escape') closeConfirmModal();
         });
 
         function dismissToast(id) {

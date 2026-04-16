@@ -46,7 +46,7 @@
                 </div>
                 <a href="{% url 'admin_delete_notice' n.pk %}"
                    class="btn btn-danger btn-sm"
-                   onclick="return confirm('Delete this notice?')"
+                   onclick="return customConfirm(event, 'Delete this notice?', 'Confirm Deletion', '🗑️', 'Delete')"
                    style="flex-shrink:0;">
                    Delete
                 </a>

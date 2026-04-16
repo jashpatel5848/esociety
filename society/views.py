@@ -71,6 +71,11 @@ def generate_otp():
 
 @role_required(allowed_roles=["admin"])
 def adminDashboardView(request):
+    # Auto-synchronize Flat statuses to guarantee accurate Vacant counts
+    from .models import Flat
+    Flat.objects.filter(residents__isnull=True).update(status='vacant')
+    Flat.objects.filter(residents__isnull=False).update(status='occupied')
+
     context = {
         'total_residents'  : ResidentProfile.objects.count(),
         'total_flats'      : Flat.objects.count(),
@@ -155,6 +160,10 @@ def adminEditResidentView(request, pk):
 # ── Flat Management ──
 @role_required(allowed_roles=["admin"])
 def adminFlatListView(request):
+    # Auto-synchronize Flat statuses to guarantee accurate Vacant counts
+    Flat.objects.filter(residents__isnull=True).update(status='vacant')
+    Flat.objects.filter(residents__isnull=False).update(status='occupied')
+    
     flats = Flat.objects.select_related('society').all()
     return render(request, "society/admin/flat_list.html", {'flats': flats})
 

@@ -34,9 +34,9 @@
 {% endif %}
 
 <div
-  style="min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px 24px;background:linear-gradient(135deg,#F0F4FF 0%,#F4F6FA 60%,#EFF6FF 100%);">
+  style="min-height:calc(100vh - 64px);display:flex;flex-direction:column;padding:40px 24px;background:linear-gradient(135deg,#F0F4FF 0%,#F4F6FA 60%,#EFF6FF 100%);">
   <div
-    style="background:#fff;border:1px solid #E2E8F0;border-radius:24px;padding:48px 40px;width:100%;max-width:480px;box-shadow:0 12px 40px rgba(0,0,0,0.08);">
+    style="margin:auto;background:#fff;border:1px solid #E2E8F0;border-radius:24px;padding:48px 40px;width:100%;max-width:480px;box-shadow:0 12px 40px rgba(0,0,0,0.08);">
 
     <!-- Logo -->
     <div style="text-align:center;margin-bottom:32px;">
@@ -125,7 +125,8 @@
       <div style="margin-bottom:18px;">
         <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">Password <span
             style="color:#EF4444;">*</span></label>
-        <input type="password" name="password1" placeholder="Min 8 characters" required autocomplete="off" spellcheck="false"
+        <input type="password" name="password1" placeholder="Min 8 characters" required autocomplete="off"
+          spellcheck="false"
           style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:10px 12px;outline:none;font-family:'DM Sans',sans-serif;"
           onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)'"
           onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />
@@ -135,7 +136,8 @@
       <div style="margin-bottom:20px;">
         <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:6px;">Confirm
           Password <span style="color:#EF4444;">*</span></label>
-        <input type="password" name="password2" placeholder="Repeat password" required autocomplete="off" spellcheck="false"
+        <input type="password" name="password2" placeholder="Repeat password" required autocomplete="off"
+          spellcheck="false"
           style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:10px 12px;outline:none;font-family:'DM Sans',sans-serif;"
           onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)'"
           onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />

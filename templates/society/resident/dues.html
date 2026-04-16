@@ -46,7 +46,7 @@
                         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
                             <span class="badge badge-danger">Unpaid</span>
                             <a href="{% url 'resident_pay_due' d.pk %}" class="btn btn-primary btn-sm"
-                               onclick="return confirm('Pay ₹{{ d.amount }} for {{ d.month }}?')">
+                               onclick="return customConfirm(event, 'Pay ₹{{ d.amount }} for {{ d.month }}?', 'Confirm Payment', '💳', 'Pay Now')">
                                Pay Now
                             </a>
                         </div>

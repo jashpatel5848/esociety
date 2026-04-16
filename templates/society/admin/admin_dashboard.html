@@ -154,7 +154,7 @@
                     <div style="display:flex;align-items:center;justify-content:space-between;">
                         <small style="color:var(--text-muted);">{{ n.created_at|date:"d M Y" }}</small>
                         <a href="{% url 'admin_delete_notice' n.pk %}" class="btn btn-danger btn-sm"
-                           onclick="return confirm('Delete this notice?')">Delete</a>
+                           onclick="return customConfirm(event, 'Delete this notice?', 'Confirm Deletion', '🗑️', 'Delete')">Delete</a>
                     </div>
                 </div>
                 {% endfor %}

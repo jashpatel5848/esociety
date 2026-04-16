@@ -88,7 +88,7 @@
                             {% if v.status == 'approved' and not v.exit_time %}
                             <a href="{% url 'guard_mark_exit' v.pk %}"
                                class="btn btn-secondary btn-sm"
-                               onclick="return confirm('Mark {{ v.name }} as exited?')">
+                               onclick="return customConfirm(event, 'Mark {{ v.name }} as exited?', 'Confirm Exit', '🚪', 'Mark Exited')">
                                Exit
                             </a>
                             {% else %}—{% endif %}

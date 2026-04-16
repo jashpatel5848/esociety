@@ -52,7 +52,7 @@
                 <a href="{% url 'admin_resolve_alert' a.pk %}"
                    class="btn btn-primary btn-sm"
                    style="flex-shrink:0;"
-                   onclick="return confirm('Mark this alert as resolved?')">
+                   onclick="return customConfirm(event, 'Mark this alert as resolved?', 'Resolve Alert', '✅', 'Mark Resolved')">
                    ✅ Resolve
                 </a>
                 {% endif %}

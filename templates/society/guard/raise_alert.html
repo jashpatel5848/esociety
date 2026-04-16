@@ -57,7 +57,7 @@
             <div class="card-footer">
                 <a href="{% url 'guard_dashboard' %}" class="btn btn-ghost">Cancel</a>
                 <button type="submit" class="btn btn-danger"
-                    onclick="return confirm('Are you sure you want to raise an emergency alert?')">
+                    onclick="return customConfirm(event, 'Are you sure you want to raise an emergency alert?', 'Confirm Emergency', '🚨', 'Raise Alert')">
                     🚨 Raise Emergency Alert
                 </button>
             </div>

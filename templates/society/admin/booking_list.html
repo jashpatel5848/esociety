@@ -68,13 +68,13 @@
                             <div style="display:flex;gap:8px;justify-content:flex-end;">
                                 <form method="post" action="{% url 'admin_update_booking' booking.pk 'approve' %}" style="display:inline;">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Approve this booking?');">
+                                    <button type="submit" class="btn btn-primary btn-sm" onclick="return customConfirm(event, 'Approve this booking?', 'Approve Request', '👍', 'Approve');">
                                         Approve
                                     </button>
                                 </form>
                                 <form method="post" action="{% url 'admin_update_booking' booking.pk 'reject' %}" style="display:inline;">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject this booking?');">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return customConfirm(event, 'Reject this booking?', 'Reject Request', '👎', 'Reject');">
                                         Reject
                                     </button>
                                 </form>

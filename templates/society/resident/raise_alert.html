@@ -61,7 +61,7 @@
                 </div>
 
                 <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 12px;">
-                    <button type="submit" class="btn btn-danger btn-lg" style="width: 100%; height: 56px; font-size: 1.1rem; box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);" onclick="return confirm('Are you sure you want to raise an emergency alert?')">
+                    <button type="submit" class="btn btn-danger btn-lg" style="width: 100%; height: 56px; font-size: 1.1rem; box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);" onclick="return customConfirm(event, 'Are you sure you want to raise an emergency alert?', 'Confirm Emergency', '🚨', 'Raise Alert')">
                         🚨 ACTIVATE EMERGENCY ALERT
                     </button>
                     <a href="{% url 'resident_dashboard' %}" class="btn btn-ghost" style="text-align: center;">Nevermind, I'm safe</a>

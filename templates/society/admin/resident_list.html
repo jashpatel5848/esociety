@@ -62,7 +62,7 @@
                             <div style="display:flex;gap:6px;">
                                 <a href="{% url 'admin_edit_resident' r.pk %}" class="btn btn-ghost btn-sm">Edit</a>
                                 <a href="{% url 'admin_delete_resident' r.pk %}" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Delete this resident?')">
+                                onclick="return customConfirm(event, 'Delete this resident?', 'Confirm Action', '🗑️', 'Delete')">
                                 Delete
                                 </a>
                             </div>  
