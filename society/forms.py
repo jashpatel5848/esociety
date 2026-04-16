@@ -152,3 +152,84 @@ class OTPVerifyForm(forms.Form):
         'placeholder': 'Enter 6-digit OTP',
         'maxlength': '6'
     }))
+
+
+class GuardAddForm(forms.Form):
+    first_name = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name  = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email      = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    password   = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    mobile     = forms.CharField(max_length=15, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    society    = forms.ModelChoiceField(queryset=Society.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
+    shift      = forms.ChoiceField(choices=GuardProfile.SHIFT_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
+
+
+class GuardEditForm(forms.ModelForm):
+    class Meta:
+        model  = GuardProfile
+        fields = ['shift']
+        widgets = {
+            'shift': forms.Select(attrs={'class': 'form-select'}),
+        }
+
+
+class FlatEditForm(forms.ModelForm):
+    class Meta:
+        model  = Flat
+        fields = ['flat_number', 'floor', 'society']
+        widgets = {
+            'flat_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'floor':       forms.NumberInput(attrs={'class': 'form-control'}),
+            'society':     forms.Select(attrs={'class': 'form-select'}),
+        }
+
+
+class FacilityEditForm(forms.ModelForm):
+    class Meta:
+        model  = Facility
+        fields = ['name', 'description', 'capacity', 'price', 'is_active']
+        widgets = {
+            'name':        forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'capacity':    forms.NumberInput(attrs={'class': 'form-control'}),
+            'price':       forms.NumberInput(attrs={'class': 'form-control'}),
+            'is_active':   forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
+class NoticeEditForm(forms.ModelForm):
+    class Meta:
+        model  = Notice
+        fields = ['title', 'content', 'notice_type', 'is_active']
+        widgets = {
+            'title':       forms.TextInput(attrs={'class': 'form-control'}),
+            'content':     forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'notice_type': forms.Select(attrs={'class': 'form-select'}),
+            'is_active':   forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
+class DueEditForm(forms.ModelForm):
+    class Meta:
+        model  = MaintenanceDue
+        fields = ['month', 'amount', 'due_date', 'status']
+        widgets = {
+            'month':    forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. March 2026'}),
+            'amount':   forms.NumberInput(attrs={'class': 'form-control'}),
+            'due_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'status':   forms.Select(attrs={'class': 'form-select'}),
+        }
+
+
+class ExpenseEditForm(forms.ModelForm):
+    class Meta:
+        model  = SocietyExpense
+        fields = ['title', 'category', 'amount', 'date', 'description']
+        widgets = {
+            'title':       forms.TextInput(attrs={'class': 'form-control'}),
+            'category':    forms.Select(attrs={'class': 'form-select'}),
+            'amount':      forms.NumberInput(attrs={'class': 'form-control'}),
+            'date':        forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+

@@ -44,12 +44,14 @@
                         Posted by {% if n.posted_by %}{{ n.posted_by.first_name|default:n.posted_by.email }}{% else %}Society Admin{% endif %} — {{ n.created_at|date:"d M Y, H:i" }}
                     </small>
                 </div>
-                <a href="{% url 'admin_delete_notice' n.pk %}"
-                   class="btn btn-danger btn-sm"
-                   onclick="return customConfirm(event, 'Delete this notice?', 'Confirm Deletion', '🗑️', 'Delete')"
-                   style="flex-shrink:0;">
-                   Delete
-                </a>
+                <div style="display:flex;gap:8px;flex-shrink:0;">
+                    <a href="{% url 'admin_edit_notice' n.pk %}" class="btn btn-ghost btn-sm">Edit</a>
+                    <a href="{% url 'admin_delete_notice' n.pk %}"
+                       class="btn btn-danger btn-sm"
+                       onclick="return customConfirm(event, 'Delete this notice?', 'Confirm Deletion', '🗑️', 'Delete')">
+                       Delete
+                    </a>
+                </div>
             </div>
             {% endfor %}
         </div>

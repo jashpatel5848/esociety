@@ -52,7 +52,7 @@
           onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />
       </div>
 
-      <div style="margin-bottom:28px;">
+      <div style="margin-bottom:8px;">
         <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:8px;">Password <span
             style="color:#EF4444;">*</span></label>
         <input type="password" name="password" placeholder="Enter your password" required autocomplete="off"
@@ -60,6 +60,12 @@
           style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;color:#0F172A;font-size:0.9rem;padding:11px 14px;outline:none;transition:all 0.2s;font-family:'DM Sans',sans-serif;"
           onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)'"
           onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'" />
+      </div>
+      <div style="text-align:right;margin-bottom:24px;">
+        <a href="{% url 'forgot_password' %}" style="font-size:0.8125rem;color:#1E6FF1;font-weight:600;text-decoration:none;"
+          onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+          Forgot Password?
+        </a>
       </div>
 
       <button type="submit"

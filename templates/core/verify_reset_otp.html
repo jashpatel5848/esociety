@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP — e-Society{% endblock %}
+
+{% block content %}
+
+<div style="min-height:calc(100vh - 64px);display:flex;flex-direction:column;padding:40px 24px;background:linear-gradient(135deg,#F0F4FF 0%,#F4F6FA 60%,#EFF6FF 100%);">
+  <div style="margin:auto;background:#fff;border:1px solid #E2E8F0;border-radius:24px;padding:48px 40px;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,0.08);">
+
+    <!-- Icon -->
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="width:56px;height:56px;background:linear-gradient(135deg,#1E6FF1,#4C9BF5);border-radius:16px;display:grid;place-items:center;margin:0 auto 16px;box-shadow:0 0 24px rgba(30,111,241,0.3);">
+        <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <h2 style="font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;color:#0F172A;margin-bottom:6px;">Check Your Email</h2>
+      <p style="font-size:0.875rem;color:#94A3B8;line-height:1.6;">
+        We sent a 6-digit OTP to<br/>
+        <strong style="color:#1E6FF1;">{{ email }}</strong>
+      </p>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div style="padding:12px 16px;border-radius:10px;margin-bottom:20px;font-size:0.875rem;font-weight:500;
+          {% if message.tags == 'error' %}background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;
+          {% else %}background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- OTP Form -->
+    <form method="post" autocomplete="off" id="otpForm">
+      {% csrf_token %}
+
+      <div style="margin-bottom:28px;">
+        <label style="display:block;font-size:0.8125rem;font-weight:600;color:#475569;margin-bottom:12px;text-align:center;">
+          Enter 6-Digit OTP
+        </label>
+
+        <!-- 6 individual boxes -->
+        <div style="display:flex;gap:10px;justify-content:center;" id="otpBoxes">
+          {% for i in "123456" %}
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"
+              class="otp-box"
+              style="width:44px;height:52px;border:1.5px solid #E2E8F0;border-radius:10px;text-align:center;font-size:1.4rem;font-weight:700;color:#0F172A;background:#F8FAFC;outline:none;transition:all 0.2s;"
+              onfocus="this.style.borderColor='#1E6FF1';this.style.boxShadow='0 0 0 3px rgba(30,111,241,0.12)';this.style.background='#fff';"
+              onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none';this.style.background='#F8FAFC';" />
+          {% endfor %}
+        </div>
+
+        <!-- Hidden combined OTP field -->
+        <input type="hidden" name="otp" id="otpHidden" />
+      </div>
+
+      <button type="submit" id="verifyBtn"
+        style="width:100%;background:#1E6FF1;color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.01em;"
+        onmouseover="this.style.background='#1558CC';this.style.boxShadow='0 0 20px rgba(30,111,241,0.3)'"
+        onmouseout="this.style.background='#1E6FF1';this.style.boxShadow='none'">
+        Verify OTP →
+      </button>
+    </form>
+
+    <!-- Resend -->
+    <div style="text-align:center;margin-top:24px;font-size:0.875rem;color:#94A3B8;">
+      Didn't get the OTP?
+      <a href="{% url 'forgot_password' %}" style="color:#1E6FF1;font-weight:600;text-decoration:none;margin-left:4px;"
+        onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+        Resend OTP
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const boxes = document.querySelectorAll('.otp-box');
+  const hidden = document.getElementById('otpHidden');
+  const form   = document.getElementById('otpForm');
+
+  boxes.forEach((box, idx) => {
+    box.addEventListener('input', () => {
+      // Only allow digits
+      box.value = box.value.replace(/[^0-9]/g, '');
+      if (box.value && idx < boxes.length - 1) boxes[idx + 1].focus();
+      syncHidden();
+    });
+
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !box.value && idx > 0) boxes[idx - 1].focus();
+    });
+
+    // Handle paste on first box
+    box.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasted = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+      pasted.split('').forEach((ch, i) => { if (boxes[i]) boxes[i].value = ch; });
+      if (boxes[Math.min(pasted.length, 5)]) boxes[Math.min(pasted.length, 5)].focus();
+      syncHidden();
+    });
+  });
+
+  function syncHidden() {
+    hidden.value = Array.from(boxes).map(b => b.value).join('');
+  }
+
+  form.addEventListener('submit', () => { syncHidden(); });
+</script>
+
+{% endblock %}

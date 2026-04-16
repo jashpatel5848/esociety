@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Guards — e-Society{% endblock %}
+{% block content %}
+<div class="page-body">
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Guards</h2>
+            <p class="page-header-subtitle">All guards in the society</p>
+        </div>
+        <a href="{% url 'admin_add_guard' %}" class="btn btn-primary">+ Add Guard</a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}" style="margin-bottom:16px;">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">🛡️ Guard List</div>
+            <div class="card-subtitle">Total: {{ guards|length }}</div>
+        </div>
+        {% if guards %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Shift</th>
+                        <th>Society</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for g in guards %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><div style="font-weight:600;color:var(--text-primary);">{{ g.user.first_name }} {{ g.user.last_name }}</div></td>
+                        <td>{{ g.user.email }}</td>
+                        <td>{{ g.user.mobile|default:"—" }}</td>
+                        <td>
+                            {% if g.shift == 'morning' %}<span class="badge badge-warning">Morning</span>
+                            {% elif g.shift == 'evening' %}<span class="badge badge-info">Evening</span>
+                            {% else %}<span class="badge badge-neutral">Night</span>{% endif %}
+                        </td>
+                        <td>{{ g.society.name }}</td>
+                        <td>{{ g.joined_at|date:"d M Y" }}</td>
+                        <td>
+                            <div style="display:flex;gap:8px;">
+                                <a href="{% url 'admin_edit_guard' g.pk %}" class="btn btn-ghost btn-sm">Edit</a>
+                                <a href="{% url 'admin_delete_guard' g.pk %}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Remove this guard?')">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🛡️</div>
+            <div class="empty-title">No guards yet</div>
+            <div class="empty-desc">Add guards from the button above</div>
+            <a href="{% url 'admin_add_guard' %}" class="btn btn-primary" style="margin-top:16px;">+ Add First Guard</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

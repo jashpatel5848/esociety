@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Edit Flat — e-Society{% endblock %}
+{% block content %}
+<div class="page-body">
+    <div class="page-header">
+        <div>
+            <h2 class="page-header-title">Edit Flat</h2>
+            <p class="page-header-subtitle">Update flat details — Flat {{ flat.flat_number }}</p>
+        </div>
+        <a href="{% url 'admin_flat_list' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+    <div class="card" style="max-width:500px;">
+        <div class="card-header"><div class="card-title">🏢 Flat Details</div></div>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group" style="margin-bottom:16px;">
+                <label class="form-label">{{ field.label }} {% if field.field.required %}<span style="color:#EF4444;">*</span>{% endif %}</label>
+                {{ field }}
+                {% if field.errors %}<div style="color:#EF4444;font-size:0.8rem;margin-top:4px;">{{ field.errors }}</div>{% endif %}
+            </div>
+            {% endfor %}
+            <div class="card-footer">
+                <a href="{% url 'admin_flat_list' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -22,6 +22,9 @@
         <li><a href="{% url 'admin_resident_list' %}"
                 class="nav-item {% if 'resident' in request.resolver_match.url_name %}active{% endif %}">👥
                 Residents</a></li>
+        <li><a href="{% url 'admin_guard_list' %}"
+                class="nav-item {% if 'guard' in request.resolver_match.url_name %}active{% endif %}">🛡️
+                Guards</a></li>
         <li><a href="{% url 'admin_flat_list' %}"
                 class="nav-item {% if 'flat' in request.resolver_match.url_name %}active{% endif %}">🏢 Flats</a></li>
         <li><a href="{% url 'admin_complaint_list' %}"

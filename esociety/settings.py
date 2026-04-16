@@ -138,6 +138,7 @@ EMAIL_PORT = '587'
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'jaivikpatel5848@gmail.com'
 EMAIL_HOST_PASSWORD = 'wrxw huem wcxs qeob'      #app password
+DEFAULT_FROM_EMAIL = 'e-Society <jaivikpatel5848@gmail.com>'
 
 RAZORPAY_KEY_ID = "rzp_test_Sabuhwd8z6gOZE"
 RAZORPAY_KEY_SECRET = "Almc4BKCwgbIqx4TulnDtkfe"     

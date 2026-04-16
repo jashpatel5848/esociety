@@ -13,7 +13,9 @@ from .forms import (
     ResidentAddForm, ResidentEditForm, FlatForm, ComplaintUpdateForm, NoticeForm,
     MaintenanceDueForm, SocietyExpenseForm, FacilityForm, VisitorForm,
     ComplaintForm, FacilityBookingForm, EmergencyAlertForm, OTPVerifyForm,
-    GuardVisitorForm
+    GuardVisitorForm,
+    GuardAddForm, GuardEditForm, FlatEditForm, FacilityEditForm,
+    NoticeEditForm, DueEditForm, ExpenseEditForm
 )
 from core.models import User
 import random
@@ -346,6 +348,169 @@ def adminResolveAlertView(request, pk):
 def adminVisitorListView(request):
     visitors = Visitor.objects.select_related('resident__user', 'resident__flat').order_by('-created_at')
     return render(request, "society/admin/visitor_list.html", {'visitors': visitors})
+
+
+# ── Flat Edit / Delete ──
+@role_required(allowed_roles=["admin"])
+def adminEditFlatView(request, pk):
+    flat = get_object_or_404(Flat, pk=pk)
+    if request.method == "POST":
+        form = FlatEditForm(request.POST, instance=flat)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Flat updated!")
+            return redirect('admin_flat_list')
+    else:
+        form = FlatEditForm(instance=flat)
+    return render(request, "society/admin/edit_flat.html", {'form': form, 'flat': flat})
+
+
+@role_required(allowed_roles=["admin"])
+def adminDeleteFlatView(request, pk):
+    flat = get_object_or_404(Flat, pk=pk)
+    flat.delete()
+    messages.success(request, "Flat deleted.")
+    return redirect('admin_flat_list')
+
+
+# ── Facility Edit / Delete ──
+@role_required(allowed_roles=["admin"])
+def adminEditFacilityView(request, pk):
+    facility = get_object_or_404(Facility, pk=pk)
+    if request.method == "POST":
+        form = FacilityEditForm(request.POST, instance=facility)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Facility updated!")
+            return redirect('admin_facility_list')
+    else:
+        form = FacilityEditForm(instance=facility)
+    return render(request, "society/admin/edit_facility.html", {'form': form, 'facility': facility})
+
+
+@role_required(allowed_roles=["admin"])
+def adminDeleteFacilityView(request, pk):
+    facility = get_object_or_404(Facility, pk=pk)
+    facility.delete()
+    messages.success(request, "Facility deleted.")
+    return redirect('admin_facility_list')
+
+
+# ── Notice Edit ──
+@role_required(allowed_roles=["admin"])
+def adminEditNoticeView(request, pk):
+    notice = get_object_or_404(Notice, pk=pk)
+    if request.method == "POST":
+        form = NoticeEditForm(request.POST, instance=notice)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Notice updated!")
+            return redirect('admin_notice_list')
+    else:
+        form = NoticeEditForm(instance=notice)
+    return render(request, "society/admin/edit_notice.html", {'form': form, 'notice': notice})
+
+
+# ── Guard Management ──
+@role_required(allowed_roles=["admin"])
+def adminGuardListView(request):
+    guards = GuardProfile.objects.select_related('user', 'society').all()
+    return render(request, "society/admin/guard_list.html", {'guards': guards})
+
+
+@role_required(allowed_roles=["admin"])
+def adminAddGuardView(request):
+    if request.method == "POST":
+        form = GuardAddForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password'],
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                mobile=form.cleaned_data['mobile'],
+                role='guard',
+                status='active',
+                is_active=True,
+            )
+            GuardProfile.objects.create(
+                user=user,
+                society=form.cleaned_data['society'],
+                shift=form.cleaned_data['shift'],
+            )
+            messages.success(request, "Guard added successfully!")
+            return redirect('admin_guard_list')
+    else:
+        form = GuardAddForm()
+    return render(request, "society/admin/add_guard.html", {'form': form})
+
+
+@role_required(allowed_roles=["admin"])
+def adminEditGuardView(request, pk):
+    guard = get_object_or_404(GuardProfile, pk=pk)
+    if request.method == "POST":
+        form = GuardEditForm(request.POST, instance=guard)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Guard shift updated!")
+            return redirect('admin_guard_list')
+    else:
+        form = GuardEditForm(instance=guard)
+    return render(request, "society/admin/edit_guard.html", {'form': form, 'guard': guard})
+
+
+@role_required(allowed_roles=["admin"])
+def adminDeleteGuardView(request, pk):
+    guard = get_object_or_404(GuardProfile, pk=pk)
+    guard.user.delete()
+    messages.success(request, "Guard removed.")
+    return redirect('admin_guard_list')
+
+
+# ── Due Edit / Delete ──
+@role_required(allowed_roles=["admin"])
+def adminEditDueView(request, pk):
+    due = get_object_or_404(MaintenanceDue, pk=pk)
+    if request.method == "POST":
+        form = DueEditForm(request.POST, instance=due)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Due updated!")
+            return redirect('admin_financial')
+    else:
+        form = DueEditForm(instance=due)
+    return render(request, "society/admin/edit_due.html", {'form': form, 'due': due})
+
+
+@role_required(allowed_roles=["admin"])
+def adminDeleteDueView(request, pk):
+    due = get_object_or_404(MaintenanceDue, pk=pk)
+    due.delete()
+    messages.success(request, "Due deleted.")
+    return redirect('admin_financial')
+
+
+# ── Expense Edit / Delete ──
+@role_required(allowed_roles=["admin"])
+def adminEditExpenseView(request, pk):
+    expense = get_object_or_404(SocietyExpense, pk=pk)
+    if request.method == "POST":
+        form = ExpenseEditForm(request.POST, instance=expense)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Expense updated!")
+            return redirect('admin_financial')
+    else:
+        form = ExpenseEditForm(instance=expense)
+    return render(request, "society/admin/edit_expense.html", {'form': form, 'expense': expense})
+
+
+@role_required(allowed_roles=["admin"])
+def adminDeleteExpenseView(request, pk):
+    expense = get_object_or_404(SocietyExpense, pk=pk)
+    expense.delete()
+    messages.success(request, "Expense deleted.")
+    return redirect('admin_financial')
 
 
 # ══════════════════════════════════════════

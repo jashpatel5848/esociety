@@ -28,6 +28,7 @@
                         <th>Society</th>
                         <th>Status</th>
                         <th>Resident</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,6 +55,13 @@
                             {% else %}
                                 <span style="color:var(--text-muted);">—</span>
                             {% endif %}
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:8px;">
+                                <a href="{% url 'admin_edit_flat' f.pk %}" class="btn btn-ghost btn-sm">Edit</a>
+                                <a href="{% url 'admin_delete_flat' f.pk %}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Delete Flat {{ f.flat_number }}?')">Delete</a>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
