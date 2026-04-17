@@ -161,7 +161,7 @@ function verifyBookingPayment(razorResponse) {
         if (data.status === 'success') {
             window.location.reload();
         } else {
-            alert("Payment verification failed!");
+            alert("Verification Failed: " + (data.message || "Unknown error"));
         }
     })
     .catch(error => {

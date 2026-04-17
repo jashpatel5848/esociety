@@ -31,16 +31,19 @@ from django.http import JsonResponse
 # payment
 # ══════════════════════════════════════════
 
+from django.views.decorators.csrf import csrf_exempt
+
 def create_razorpay_order(request):
     # razorpay auth
     client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
     payment = client.order.create({
         "amount": 10000,  # 100rs
         "currency": "INR",
-        "payment_capture": "1"
+        "payment_capture": 1
     })
     return JsonResponse(payment)
 
+@csrf_exempt
 def verify_razorpay_payment(request):
     import json
     # Try to get data from POST or JSON body
@@ -719,7 +722,7 @@ def residentPayBookingView(request, pk):
         order_data = {
             "amount": amount_paise,
             "currency": "INR",
-            "payment_capture": "1"
+            "payment_capture": 1
         }
         razorpay_order = client.order.create(data=order_data)
         
@@ -789,7 +792,7 @@ def residentPayDueView(request, pk):
         order_data = {
             "amount": amount_paise,
             "currency": "INR",
-            "payment_capture": "1"
+            "payment_capture": 1
         }
         razorpay_order = client.order.create(data=order_data)
         
