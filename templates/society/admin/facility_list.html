@@ -50,7 +50,7 @@
                 <div style="display:flex;gap:8px;margin-top:4px;">
                     <a href="{% url 'admin_edit_facility' f.pk %}" class="btn btn-ghost btn-sm" style="flex:1;text-align:center;">Edit</a>
                     <a href="{% url 'admin_delete_facility' f.pk %}" class="btn btn-danger btn-sm" style="flex:1;text-align:center;"
-                       onclick="return confirm('Delete {{ f.name }}?')">Delete</a>
+                       onclick="return customConfirm(event, 'Delete facility {{ f.name }}?', 'Confirm Deletion', '🏢', 'Yes, Delete')">Delete</a>
                 </div>
             </div>
             {% endfor %}

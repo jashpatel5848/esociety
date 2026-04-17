@@ -54,7 +54,7 @@
                             <div style="display:flex;gap:8px;">
                                 <a href="{% url 'admin_edit_guard' g.pk %}" class="btn btn-ghost btn-sm">Edit</a>
                                 <a href="{% url 'admin_delete_guard' g.pk %}" class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Remove this guard?')">Delete</a>
+                                   onclick="return customConfirm(event, 'Remove this guard?', 'Confirm Deletion', '🛡️', 'Yes, Delete')">Delete</a>
                             </div>
                         </td>
                     </tr>

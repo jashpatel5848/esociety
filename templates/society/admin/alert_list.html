@@ -41,7 +41,7 @@
                         {{ a.description }}
                     </p>
                     <small style="color:var(--text-muted);">
-                        Raised by {{ a.raised_by.first_name|default:a.raised_by.email }}
+                        Raised by {% if a.raised_by %}{{ a.raised_by.first_name|default:a.raised_by.email }}{% else %}System/Deleted User{% endif %}
                         — {{ a.created_at|date:"d M Y, H:i" }}
                         {% if a.resolved_at %}
                         | Resolved at {{ a.resolved_at|date:"d M Y, H:i" }}

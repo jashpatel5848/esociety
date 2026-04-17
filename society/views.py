@@ -7,7 +7,7 @@ from django.utils import timezone
 from .models import (
     Society, Flat, ResidentProfile, GuardProfile,
     Visitor, Complaint, Facility, FacilityBooking,
-    MaintenanceDue, SocietyExpense, Notice, EmergencyAlert
+    MaintenanceDue, SocietyExpense, Notice, EmergencyAlert, Transaction
 )
 from .forms import (
     ResidentAddForm, ResidentEditForm, FlatForm, ComplaintUpdateForm, NoticeForm,
@@ -31,32 +31,68 @@ from django.http import JsonResponse
 # payment
 # ══════════════════════════════════════════
 
-def booking(request):
-    return render(request, "society/admin/booking.html")
-    
 def create_razorpay_order(request):
-    #razorpay auth
-    client = razorpay.Client(auth=("rzp_test_Sabuhwd8z6gOZE", "Almc4BKCwgbIqx4TulnDtkfe"))
+    # razorpay auth
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
     payment = client.order.create({
-        "amount": 10000,  #100rs
+        "amount": 10000,  # 100rs
         "currency": "INR",
         "payment_capture": "1"
     })
     return JsonResponse(payment)
 
 def verify_razorpay_payment(request):
-    client = razorpay.Client(auth=("rzp_test_Sabuhwd8z6gOZE", "Almc4BKCwgbIqx4TulnDtkfe"))
+    import json
+    # Try to get data from POST or JSON body
+    data = {}
+    if request.method == "POST":
+        data = request.POST
+        if not data:
+            try:
+                data = json.loads(request.body)
+            except:
+                data = {}
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method"})
+
     params = {
-        "razorpay_order_id": request.POST.get("razorpay_order_id"),
-        "razorpay_payment_id": request.POST.get("razorpay_payment_id"),
-        "razorpay_signature": request.POST.get("razorpay_signature"),
+        "razorpay_order_id": data.get("razorpay_order_id"),
+        "razorpay_payment_id": data.get("razorpay_payment_id"),
+        "razorpay_signature": data.get("razorpay_signature"),
     }
+
+    if not all(params.values()):
+        return JsonResponse({"status": "error", "message": f"Missing parameters: {[k for k,v in params.items() if not v]}"})
+
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    
     try:
         client.utility.verify_payment_signature(params)
+        
+        # Update Transaction record
+        tx = Transaction.objects.get(order_id=params["razorpay_order_id"])
+        tx.payment_id = params["razorpay_payment_id"]
+        tx.status = 'success'
+        tx.save()
+        
+        # Update linked Due
+        if tx.due:
+            tx.due.status = 'paid'
+            tx.due.paid_on = timezone.now()
+            tx.due.save()
+
+        # Update linked Booking
+        if tx.booking:
+            tx.booking.status = 'confirmed'
+            tx.booking.save()
+            
         return JsonResponse({"status": "success"})
-        #payment --> 3 data store...
-    except:
-        return JsonResponse({"status": "error"})
+    except razorpay.errors.SignatureVerificationError as e:
+        return JsonResponse({"status": "error", "message": "Invalid payment signature."})
+    except Transaction.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Transaction record not found."})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
     
     
 
@@ -74,7 +110,6 @@ def generate_otp():
 @role_required(allowed_roles=["admin"])
 def adminDashboardView(request):
     # Auto-synchronize Flat statuses to guarantee accurate Vacant counts
-    from .models import Flat
     Flat.objects.filter(residents__isnull=True).update(status='vacant')
     Flat.objects.filter(residents__isnull=False).update(status='occupied')
 
@@ -649,8 +684,15 @@ def residentBookFacilityView(request, facility_id):
             booking.resident = request.user.resident_profile
             booking.facility = facility
             booking.amount_paid = facility.price
+            
+            # All paid facility bookings start as pending
+            if facility.price > 0:
+                booking.status = 'pending'
+            else:
+                booking.status = 'confirmed'
+                
             booking.save()
-            messages.success(request, f"{facility.name} booked successfully!")
+            messages.success(request, f"{facility.name} booking request submitted!")
             return redirect('resident_my_bookings')
     else:
         form = FacilityBookingForm()
@@ -658,10 +700,63 @@ def residentBookFacilityView(request, facility_id):
 
 
 @role_required(allowed_roles=["resident"])
+def residentPayBookingView(request, pk):
+    try:
+        resident_profile = getattr(request.user, 'resident_profile', None)
+        if not resident_profile:
+            return JsonResponse({"status": "error", "message": "Resident profile not found"})
+            
+        booking = get_object_or_404(FacilityBooking, pk=pk, resident=resident_profile)
+    
+        if booking.status == 'confirmed':
+            return JsonResponse({"status": "error", "message": "Already confirmed"})
+
+        # 1. Initialize Razorpay Client
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        
+        # 2. Create Order (Amount in paise)
+        amount_paise = int(booking.amount_paid * 100)
+        order_data = {
+            "amount": amount_paise,
+            "currency": "INR",
+            "payment_capture": "1"
+        }
+        razorpay_order = client.order.create(data=order_data)
+        
+        # 3. Save Transaction
+        Transaction.objects.create(
+            resident=request.user.resident_profile,
+            booking=booking,
+            order_id=razorpay_order['id'],
+            amount=booking.amount_paid,
+            status='pending'
+        )
+        
+        # 4. Return order details + keys for frontend
+        response_data = {
+            "status": "success",
+            "key_id": settings.RAZORPAY_KEY_ID,
+            "order_id": razorpay_order['id'],
+            "amount": amount_paise,
+            "currency": "INR",
+            "org_name": "e-Society",
+            "description": f"Booking for {booking.facility.name}",
+            "user_name": f"{request.user.first_name} {request.user.last_name}",
+            "user_email": request.user.email,
+            "user_mobile": request.user.mobile,
+        }
+        return JsonResponse(response_data)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
+
+
+@role_required(allowed_roles=["resident"])
 def residentMyBookingsView(request):
     profile  = request.user.resident_profile
     bookings = FacilityBooking.objects.filter(resident=profile).order_by('-created_at')
-    return render(request, "society/resident/my_bookings.html", {'bookings': bookings})
+    # Fetch history
+    history = Transaction.objects.filter(resident=profile, booking__isnull=False, status='success').order_by('-created_at')
+    return render(request, "society/resident/my_bookings.html", {'bookings': bookings, 'history': history})
 
 
 # ── Financial ──
@@ -669,17 +764,61 @@ def residentMyBookingsView(request):
 def residentDuesView(request):
     profile = request.user.resident_profile
     dues    = MaintenanceDue.objects.filter(resident=profile).order_by('-created_at')
-    return render(request, "society/resident/dues.html", {'dues': dues})
+    # Fetch history
+    history = Transaction.objects.filter(resident=profile, due__isnull=False, status='success').order_by('-created_at')
+    return render(request, "society/resident/dues.html", {'dues': dues, 'history': history})
 
 
 @role_required(allowed_roles=["resident"])
 def residentPayDueView(request, pk):
-    due         = get_object_or_404(MaintenanceDue, pk=pk, resident=request.user.resident_profile)
-    due.status  = 'paid'
-    due.paid_on = timezone.now()
-    due.save()
-    messages.success(request, f"Payment of ₹{due.amount} for {due.month} recorded!")
-    return redirect('resident_dues')
+    try:
+        resident_profile = getattr(request.user, 'resident_profile', None)
+        if not resident_profile:
+            return JsonResponse({"status": "error", "message": "Resident profile not found"})
+            
+        due = get_object_or_404(MaintenanceDue, pk=pk, resident=resident_profile)
+    
+        if due.status == 'paid':
+            return JsonResponse({"status": "error", "message": "Already paid"})
+
+        # 1. Initialize Razorpay Client
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        
+        # 2. Create Order (Amount in paise)
+        amount_paise = int(due.amount * 100)
+        order_data = {
+            "amount": amount_paise,
+            "currency": "INR",
+            "payment_capture": "1"
+        }
+        razorpay_order = client.order.create(data=order_data)
+        
+        # 3. Save Transaction
+        Transaction.objects.create(
+            resident=request.user.resident_profile,
+            due=due,
+            order_id=razorpay_order['id'],
+            amount=due.amount,
+            status='pending'
+        )
+        
+        # 4. Return order details + keys for frontend
+        response_data = {
+            "status": "success",
+            "key_id": settings.RAZORPAY_KEY_ID,
+            "order_id": razorpay_order['id'],
+            "amount": amount_paise,
+            "currency": "INR",
+            "org_name": "e-Society",
+            "description": f"Maintenance for {due.month}",
+            "user_name": f"{request.user.first_name} {request.user.last_name}",
+            "user_email": request.user.email,
+            "user_mobile": request.user.mobile,
+        }
+        return JsonResponse(response_data)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
+
 
 
 # ── Notice ──

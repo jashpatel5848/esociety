@@ -2,65 +2,172 @@
 {% block title %}My Bookings — e-Society{% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <div class="page-body">
 
     <div class="page-header">
         <div>
             <h2 class="page-header-title">My Bookings</h2>
-            <p class="page-header-subtitle">All your facility bookings</p>
+            <p class="page-header-subtitle">Your facility reservations</p>
         </div>
         <a href="{% url 'resident_facility_list' %}" class="btn btn-primary">+ New Booking</a>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">📅 Booking List</div>
-            <div class="card-subtitle">Total: {{ bookings|length }}</div>
-        </div>
-        {% if bookings %}
-        <div style="display:flex;flex-direction:column;gap:12px;">
-            {% for b in bookings %}
-            <div style="padding:16px;background:var(--bg-elevated);border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;">
-                <div style="font-size:1.75rem;">
-                    {% if 'gym' in b.facility.name|lower %}🏋️
-                    {% elif 'pool' in b.facility.name|lower %}🏊
-                    {% elif 'hall' in b.facility.name|lower %}🏛️
-                    {% else %}🏢{% endif %}
-                </div>
-                <div style="flex:1;">
-                    <div style="font-weight:700;font-size:1rem;color:var(--text-primary);margin-bottom:4px;">
-                        {{ b.facility.name }}
-                    </div>
-                    <div style="font-size:0.875rem;color:var(--text-secondary);">
-                        📅 {{ b.date|date:"d M Y" }} &nbsp;|&nbsp;
-                        ⏰ {{ b.start_time|time:"H:i" }} - {{ b.end_time|time:"H:i" }}
-                    </div>
-                    <small style="color:var(--text-muted);">
-                        Booked on {{ b.created_at|date:"d M Y" }} &nbsp;|&nbsp;
-                        💰 ₹{{ b.amount_paid }}
-                    </small>
-                </div>
-                <div>
-                    {% if b.status == 'confirmed' %}
-                        <span class="badge badge-success">Confirmed</span>
-                    {% elif b.status == 'pending' %}
-                        <span class="badge badge-warning">Pending</span>
-                    {% elif b.status == 'cancelled' %}
-                        <span class="badge badge-danger">Cancelled</span>
-                    {% endif %}
-                </div>
+    <div class="grid grid-2">
+        <!-- Current Bookings -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">📅 Current & Upcoming</div>
+                <div class="card-subtitle">Your facility reservations</div>
             </div>
-            {% endfor %}
+            {% if bookings %}
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                {% for b in bookings %}
+                <div style="padding:16px;background:var(--bg-elevated);border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;">
+                    <div style="font-size:1.75rem;">🏢</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:700;font-size:1rem;color:var(--text-primary);margin-bottom:4px;">
+                            {{ b.facility.name }}
+                        </div>
+                        <div style="font-size:0.875rem;color:var(--text-secondary);">
+                            {{ b.date|date:"d M Y" }} | {{ b.start_time|time:"H:i" }} - {{ b.end_time|time:"H:i" }}
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        {% if b.status == 'pending' %}
+                            <div style="text-align:right;">
+                                <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:800;color:var(--primary);">
+                                    ₹{{ b.amount_paid }}
+                                </div>
+                            </div>
+                            {% if b.amount_paid > 0 %}
+                                <button type="button" class="btn btn-primary btn-sm"
+                                    onclick="initiateBookingPayment('{{ b.pk }}', '{{ b.amount_paid }}', '{{ b.facility.name }}')">
+                                    Pay Now
+                                </button>
+                            {% endif %}
+                        {% elif b.status == 'cancelled' %}
+                            <span class="badge badge-danger">Cancelled</span>
+                        {% else %}
+                            <span class="badge badge-success">Confirmed</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state" style="padding:var(--space-2xl) 0;">
+                <div class="empty-icon">📅</div>
+                <div class="empty-title">No bookings yet</div>
+                <a href="{% url 'resident_facility_list' %}" class="btn btn-primary" style="margin-top:16px;">+ Book Facility</a>
+            </div>
+            {% endif %}
         </div>
-        {% else %}
-        <div class="empty-state">
-            <div class="empty-icon">📅</div>
-            <div class="empty-title">No bookings yet</div>
-            <div class="empty-desc">Book a facility from the button above</div>
-            <a href="{% url 'resident_facility_list' %}" class="btn btn-primary" style="margin-top:16px;">+ Book Facility</a>
+
+        <!-- Booking History Table -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">📜 Payment History</div>
+                <div class="card-subtitle">Facility transactions</div>
+            </div>
+            {% if history %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Facility</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for h in history %}
+                        <tr>
+                            <td><strong>{{ h.booking.facility.name }}</strong></td>
+                            <td>{{ h.created_at|date:"d M" }}</td>
+                            <td style="color:var(--primary); font-weight:700;">₹{{ h.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state" style="padding:var(--space-xl); text-align:center;">
+                <div class="empty-icon" style="font-size:2rem; opacity:0.3; margin-bottom:var(--space-md);">📜</div>
+                <div class="empty-title" style="font-size:0.9rem;">No transactions yet</div>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 
 </div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+function initiateBookingPayment(bookingId, amount, name) {
+    // Direct payment, skipping modal
+    fetch(`/society/resident/bookings/pay/${bookingId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            const options = {
+                "key": data.key_id,
+                "amount": data.amount,
+                "currency": data.currency,
+                "name": data.org_name,
+                "description": data.description,
+                "order_id": data.order_id,
+                "handler": function (response) {
+                    verifyBookingPayment(response);
+                },
+                "prefill": {
+                    "name": data.user_name,
+                    "email": data.user_email,
+                    "contact": data.user_mobile
+                },
+                "theme": { "color": "#1E6FF1" }
+            };
+            const rzp = new Razorpay(options);
+            rzp.open();
+        } else {
+            alert(data.message || "Something went wrong!");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Server error.");
+    });
+}
+
+function verifyBookingPayment(razorResponse) {
+    const formData = new FormData();
+    formData.append('razorpay_order_id', razorResponse.razorpay_order_id);
+    formData.append('razorpay_payment_id', razorResponse.razorpay_payment_id);
+    formData.append('razorpay_signature', razorResponse.razorpay_signature);
+
+    fetch('/society/verify-payment/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            window.location.reload();
+        } else {
+            alert("Payment verification failed!");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Verification error.");
+    });
+}
+</script>
 {% endblock %}

@@ -81,7 +81,7 @@
             <h3 id="confirmModalTitle" class="confirm-modal-title">Confirm Action</h3>
             <p id="confirmModalText" class="confirm-modal-text">Are you sure?</p>
             <div class="confirm-modal-actions">
-                <button type="button" class="btn-modal-cancel" onclick="closeConfirmModal()">Cancel</button>
+                <button type="button" class="btn-modal-cancel">Cancel</button>
                 <button type="button" id="confirmModalBtn" class="btn-modal-confirm">Confirm</button>
             </div>
         </div>
@@ -113,57 +113,88 @@
             });
         }
 
-        let confirmActionCallback = null;
-        let formToSubmit = null;
-
-        function showLogoutModal(form) {
-            formToSubmit = form;
-            showConfirmModal(
-                'Confirm Logout', 
-                'Are you sure you want to logout? <br> You\'ll need to login again to access your account.', 
-                '🚪', 
-                'Yes, Logout', 
-                function() {
-                    if (formToSubmit) formToSubmit.submit();
-                }
-            );
-        }
+        let modalPromiseResolve = null;
 
         function showConfirmModal(title, text, icon, btnText, confirmCallback) {
             document.getElementById('confirmModalTitle').innerText = title;
-            document.getElementById('confirmModalText').innerHTML = text; // Allow BR tags
+            document.getElementById('confirmModalText').innerHTML = text;
             document.getElementById('confirmModalIcon').innerText = icon || '⚠️';
             document.getElementById('confirmModalBtn').innerText = btnText || 'Confirm';
             
-            confirmActionCallback = confirmCallback;
-            
-            document.getElementById('customConfirmModal').classList.add('active');
-            document.body.style.overflow = 'hidden'; // Stop scrolling
-            
+            const modal = document.getElementById('customConfirmModal');
             const confirmBtn = document.getElementById('confirmModalBtn');
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
             confirmBtn.onclick = function() {
-                const cb = confirmActionCallback;
+                if (modalPromiseResolve) modalPromiseResolve(true);
+                if (confirmCallback) confirmCallback();
                 closeConfirmModal();
-                if (cb) cb();
+            };
+
+            const cancelBtn = modal.querySelector('.btn-modal-cancel');
+            cancelBtn.onclick = function() {
+                if (modalPromiseResolve) modalPromiseResolve(false);
+                closeConfirmModal();
             };
         }
 
         function closeConfirmModal() {
             document.getElementById('customConfirmModal').classList.remove('active');
-            document.body.style.overflow = 'auto'; // Re-enable scrolling
+            document.body.style.overflow = 'auto';
+            modalPromiseResolve = null;
         }
 
-        // Global function to replace standard inline confirm(...) calls safely!
+        // --- NEW MODERN HELPERS ---
+        
+        /**
+         * Dynamic confirmation that returns a Promise.
+         * Usage: if (await confirmAction("Delete?")) { ... }
+         */
+        function confirmAction(message, title="Confirm Action", icon="⚠️", btnText="Confirm") {
+            return new Promise((resolve) => {
+                modalPromiseResolve = resolve;
+                showConfirmModal(title, message, icon, btnText);
+            });
+        }
+
+        /**
+         * For simple alerts.
+         */
+        function alertAction(message, title="Notice", icon="ℹ️") {
+            return confirmAction(message, title, icon, "Okay");
+        }
+
+        /**
+         * Shortcut for Logout
+         */
+        function showLogoutModal(form) {
+            confirmAction(
+                'Are you sure you want to logout? <br> You\'ll need to login again to access your account.',
+                'Confirm Logout', 
+                '🚪', 
+                'Yes, Logout'
+            ).then(confirmed => {
+                if (confirmed) form.submit();
+            });
+        }
+
+        /**
+         * Global function to replace standard inline confirm(...) calls safely!
+         */
         function customConfirm(event, message, title="Confirm Action", icon="⚠️", btnText="Confirm") {
             event.preventDefault();
             const target = event.currentTarget || event.target;
             
-            showConfirmModal(title, message, icon, btnText, function() {
-                if (target.tagName.toLowerCase() === 'a' && target.href) {
-                    window.location.href = target.href;
-                } else if (target.tagName.toLowerCase() === 'button' || target.tagName.toLowerCase() === 'input') {
-                    const form = target.closest('form');
-                    if (form) form.submit();
+            confirmAction(message, title, icon, btnText).then(confirmed => {
+                if (confirmed) {
+                    if (target.tagName.toLowerCase() === 'a' && target.href) {
+                        window.location.href = target.href;
+                    } else if (target.tagName.toLowerCase() === 'button' || target.tagName.toLowerCase() === 'input') {
+                        const form = target.closest('form');
+                        if (form) form.submit();
+                    }
                 }
             });
             return false;

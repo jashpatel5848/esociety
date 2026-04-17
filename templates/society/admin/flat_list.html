@@ -60,7 +60,7 @@
                             <div style="display:flex;gap:8px;">
                                 <a href="{% url 'admin_edit_flat' f.pk %}" class="btn btn-ghost btn-sm">Edit</a>
                                 <a href="{% url 'admin_delete_flat' f.pk %}" class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Delete Flat {{ f.flat_number }}?')">Delete</a>
+                                   onclick="return customConfirm(event, 'Delete Flat {{ f.flat_number }}?', 'Confirm Deletion', '🏢', 'Yes, Delete')">Delete</a>
                             </div>
                         </td>
                     </tr>

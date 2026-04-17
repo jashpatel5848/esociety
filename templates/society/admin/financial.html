@@ -88,7 +88,7 @@
                                 <div style="display:flex;gap:6px;">
                                     <a href="{% url 'admin_edit_due' d.pk %}" class="btn btn-ghost btn-sm">Edit</a>
                                     <a href="{% url 'admin_delete_due' d.pk %}" class="btn btn-danger btn-sm"
-                                       onclick="return confirm('Delete this due?')">Del</a>
+                                       onclick="return customConfirm(event, 'Are you sure you want to delete this maintenance due?', 'Confirm Deletion', '💰', 'Yes, Delete')">Del</a>
                                 </div>
                             </td>
                         </tr>
@@ -136,7 +136,7 @@
                                 <div style="display:flex;gap:6px;">
                                     <a href="{% url 'admin_edit_expense' e.pk %}" class="btn btn-ghost btn-sm">Edit</a>
                                     <a href="{% url 'admin_delete_expense' e.pk %}" class="btn btn-danger btn-sm"
-                                       onclick="return confirm('Delete this expense?')">Del</a>
+                                       onclick="return customConfirm(event, 'Are you sure you want to delete this society expense?', 'Confirm Deletion', '📊', 'Yes, Delete')">Del</a>
                                 </div>
                             </td>
                         </tr>

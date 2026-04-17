@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect
 from .forms import UserSignupForm,UserLoginForm, UserProfileUpdateForm
 from django.contrib.auth import authenticate,login,logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.contrib import messages
 import os
 import random
 import string
@@ -56,11 +57,9 @@ def userSignupView(request):
                     del request.session['registration_email']
                     return redirect("login")
                 else:
-                    from django.contrib import messages
                     messages.error(request, 'Invalid OTP')
                     return render(request, 'core/signup.html', {'show_otp_popup': True, 'email': email, 'form': UserSignupForm()})
             except Exception as e:
-                from django.contrib import messages
                 messages.error(request, 'Something went wrong.')
                 return render(request, 'core/signup.html', {'show_otp_popup': True, 'email': email, 'form': UserSignupForm()})
 
@@ -112,7 +111,6 @@ def userSignupView(request):
             request.session['registration_email'] = email
             return render(request, 'core/signup.html', {'show_otp_popup': True, 'email': email, 'form': form})
         else:  
-            from django.contrib import messages
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f"{error}")
@@ -162,7 +160,6 @@ def userLoginView(request):
                     request.session['registration_email'] = email
                     return redirect('signup')
                 
-                from django.contrib import messages
                 messages.error(request, 'Invalid email or password!')
                 # Let it fall through to the final return
     else: 
@@ -194,7 +191,6 @@ def userProfileView(request):
         form = UserProfileUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            from django.contrib import messages
             messages.success(request, 'Profile updated successfully!')
             # Redirect back to the same page where modal was opened
             next_url = request.POST.get('next', request.META.get('HTTP_REFERER', 'home'))
@@ -211,7 +207,6 @@ def changePasswordView(request):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            from django.contrib import messages
             messages.success(request, 'Password updated successfully!')
             update_session_auth_hash(request, user)  # Important to keep the user logged in
             return redirect('profile')
@@ -226,7 +221,6 @@ def changePasswordView(request):
 
 def forgotPasswordView(request):
     """Step 1 – Enter email to receive OTP."""
-    from django.contrib import messages
 
     if request.method == 'POST':
         email = request.POST.get('email', '').strip()
@@ -264,7 +258,6 @@ def forgotPasswordView(request):
 
 def verifyResetOtpView(request):
     """Step 2 – Verify the OTP received on email."""
-    from django.contrib import messages
 
     email = request.session.get('reset_email')
     if not email:
@@ -301,7 +294,6 @@ def verifyResetOtpView(request):
 
 def resetPasswordView(request):
     """Step 3 – Set new password."""
-    from django.contrib import messages
 
     email = request.session.get('reset_email')
     verified = request.session.get('reset_verified', False)

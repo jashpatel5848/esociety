@@ -105,6 +105,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Ensure Razorpay iframes aren't affected by dark mode forced colors */
+iframe[src*="razorpay"] {
+  color-scheme: light !important;
+}
+
 a {
   color: var(--primary);
   text-decoration: none;

@@ -52,6 +52,7 @@ urlpatterns = [
     path("resident/facilities/", views.residentFacilityListView, name="resident_facility_list"),
     path("resident/facilities/book/<int:facility_id>/", views.residentBookFacilityView, name="resident_book_facility"),
     path("resident/bookings/", views.residentMyBookingsView, name="resident_my_bookings"),
+    path("resident/bookings/pay/<int:pk>/", views.residentPayBookingView, name="resident_pay_booking"),
     path("resident/dues/", views.residentDuesView, name="resident_dues"),
     path("resident/dues/pay/<int:pk>/", views.residentPayDueView, name="resident_pay_due"),
     path("resident/notices/", views.residentNoticeListView, name="resident_notice_list"),
@@ -67,7 +68,6 @@ urlpatterns = [
 
     # ── PAYMENT ──
     path("create-order/", views.create_razorpay_order, name="create_order"),
-    path("booking/", views.booking, name="booking"),
     path("verify-payment/", views.verify_razorpay_payment, name="verify_payment"),
     
 ]

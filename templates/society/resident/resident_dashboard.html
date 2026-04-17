@@ -53,7 +53,8 @@
                 </div>
                 <div class="entry-actions">
                     <a href="{% url 'resident_approve_visitor' v.pk %}" class="btn btn-primary btn-sm">✅ Approve</a>
-                    <a href="{% url 'resident_deny_visitor' v.pk %}" class="btn btn-danger btn-sm">❌ Deny</a>
+                    <a href="{% url 'resident_deny_visitor' v.pk %}" class="btn btn-danger btn-sm"
+                       onclick="return customConfirm(event, 'Deny entry for this visitor?', 'Deny Access', '❌', 'Deny')">❌ Deny</a>
                 </div>
             </div>
             {% endfor %}
@@ -143,7 +144,7 @@
                     </div>
                     <div style="display:flex;align-items:center;gap:10px;">
                         <span style="font-weight:700;color:var(--accent);">₹{{ due.amount }}</span>
-                        <a href="{% url 'resident_pay_due' due.pk %}" class="btn btn-primary btn-sm">Pay</a>
+                        <a href="{% url 'resident_dues' %}" class="btn btn-primary btn-sm">Pay Now</a>
                     </div>
                 </div>
                 {% endfor %}
