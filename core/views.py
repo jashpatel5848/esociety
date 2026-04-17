@@ -37,9 +37,10 @@ def userSignupView(request):
                     user.save()
                     
                     # Send welcome email now
+                    homepage_url = request.build_absolute_uri('/')
                     html_content = render_to_string(
                         'core/welcome_email.html',
-                        {'email': email}
+                        {'email': email, 'homepage_url': homepage_url}
                     )
                     email_msg = EmailMultiAlternatives(
                         subject="Welcome to eSociety",
