@@ -748,7 +748,7 @@ def residentPayBookingView(request, pk):
             "description": f"Booking for {booking.facility.name}",
             "user_name": f"{request.user.first_name} {request.user.last_name}",
             "user_email": request.user.email,
-            "user_mobile": str(request.user.mobile),
+            "user_mobile": str(request.user.mobile) if request.user.mobile else "9999999999",
         }
         return JsonResponse(response_data)
     except Exception as e:
@@ -820,7 +820,7 @@ def residentPayDueView(request, pk):
             "description": f"Maintenance for {due.month}",
             "user_name": f"{request.user.first_name} {request.user.last_name}",
             "user_email": request.user.email,
-            "user_mobile": str(request.user.mobile),
+            "user_mobile": str(request.user.mobile) if request.user.mobile else "9999999999",
         }
         return JsonResponse(response_data)
     except Exception as e:
