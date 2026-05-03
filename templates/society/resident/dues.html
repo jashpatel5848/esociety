@@ -105,10 +105,9 @@
 function initiatePayment(dueId, amount, month) {
     // Direct payment, skipping modal as requested
     fetch(`/society/resident/dues/pay/${dueId}/`, {
-        method: 'POST',
+        method: 'GET',
         headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            'Content-Type': 'application/json'
+            'X-Requested-With': 'XMLHttpRequest',
         }
     })
     .then(response => response.json())
@@ -159,6 +158,7 @@ function verifyPayment(razorResponse) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
+            alert("✅ Payment Successful!");
             window.location.reload();
         } else {
             alert("Verification Failed: " + (data.message || "Unknown error"));

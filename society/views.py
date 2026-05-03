@@ -701,7 +701,7 @@ def residentBookFacilityView(request, facility_id):
         form = FacilityBookingForm()
     return render(request, "society/resident/book_facility.html", {'facility': facility, 'form': form})
 
-
+@csrf_exempt
 @role_required(allowed_roles=["resident"])
 def residentPayBookingView(request, pk):
     try:
@@ -727,12 +727,14 @@ def residentPayBookingView(request, pk):
         razorpay_order = client.order.create(data=order_data)
         
         # 3. Save Transaction
-        Transaction.objects.create(
-            resident=request.user.resident_profile,
-            booking=booking,
+        Transaction.objects.get_or_create(
             order_id=razorpay_order['id'],
-            amount=booking.amount_paid,
-            status='pending'
+            defaults={
+                'resident': request.user.resident_profile,
+                'booking': booking,
+                'amount': booking.amount_paid,
+                'status': 'pending'
+            }
         )
         
         # 4. Return order details + keys for frontend
@@ -746,7 +748,7 @@ def residentPayBookingView(request, pk):
             "description": f"Booking for {booking.facility.name}",
             "user_name": f"{request.user.first_name} {request.user.last_name}",
             "user_email": request.user.email,
-            "user_mobile": request.user.mobile,
+            "user_mobile": str(request.user.mobile),
         }
         return JsonResponse(response_data)
     except Exception as e:
@@ -771,7 +773,7 @@ def residentDuesView(request):
     history = Transaction.objects.filter(resident=profile, due__isnull=False, status='success').order_by('-created_at')
     return render(request, "society/resident/dues.html", {'dues': dues, 'history': history})
 
-
+@csrf_exempt
 @role_required(allowed_roles=["resident"])
 def residentPayDueView(request, pk):
     try:
@@ -797,12 +799,14 @@ def residentPayDueView(request, pk):
         razorpay_order = client.order.create(data=order_data)
         
         # 3. Save Transaction
-        Transaction.objects.create(
-            resident=request.user.resident_profile,
-            due=due,
+        Transaction.objects.get_or_create(
             order_id=razorpay_order['id'],
-            amount=due.amount,
-            status='pending'
+            defaults={
+                'resident': request.user.resident_profile,
+                'due': due,
+                'amount': due.amount,
+                'status': 'pending'
+            }
         )
         
         # 4. Return order details + keys for frontend
@@ -816,7 +820,7 @@ def residentPayDueView(request, pk):
             "description": f"Maintenance for {due.month}",
             "user_name": f"{request.user.first_name} {request.user.last_name}",
             "user_email": request.user.email,
-            "user_mobile": request.user.mobile,
+            "user_mobile": str(request.user.mobile),
         }
         return JsonResponse(response_data)
     except Exception as e:

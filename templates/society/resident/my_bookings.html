@@ -105,12 +105,10 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 function initiateBookingPayment(bookingId, amount, name) {
-    // Direct payment, skipping modal
     fetch(`/society/resident/bookings/pay/${bookingId}/`, {
-        method: 'POST',
+        method: 'GET',
         headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            'Content-Type': 'application/json'
+            'X-Requested-With': 'XMLHttpRequest',
         }
     })
     .then(response => response.json())
@@ -131,9 +129,17 @@ function initiateBookingPayment(bookingId, amount, name) {
                     "email": data.user_email,
                     "contact": data.user_mobile
                 },
-                "theme": { "color": "#1E6FF1" }
+                "theme": { "color": "#1E6FF1" },
+                "modal": {
+                    "ondismiss": function() {
+                        console.log("Payment modal closed");
+                    }
+                }
             };
             const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function(response) {
+                alert("Payment Failed: " + response.error.description);
+            });
             rzp.open();
         } else {
             alert(data.message || "Something went wrong!");
@@ -159,6 +165,7 @@ function verifyBookingPayment(razorResponse) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
+            alert("✅ Payment Successful!");
             window.location.reload();
         } else {
             alert("Verification Failed: " + (data.message || "Unknown error"));
